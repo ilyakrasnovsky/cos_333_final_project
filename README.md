@@ -1,4 +1,8 @@
-# cos_333_final_project
+# COS 333 Final Project
+
+## Functionality (TBD)
+
+## Programming Practice Team Rules
 
 Here are some proposed basic ground rules for us, in terms of software practices. **PLEASE READ THIS CAREFULLY**. If you disagree with any of this, please bring it up on our Slack page, and we'll discuss/amend. Also, if you are not familiar with Github, **PLEASE CONSULT** with a team member who is so as not to mistakenly break something.
 
