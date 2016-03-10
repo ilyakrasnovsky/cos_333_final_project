@@ -1,24 +1,24 @@
 # cos_333_final_project
 
-Here are some proposed basic ground rules for us, in terms of software practices. **PLEASE READ THIS CAREFULLY**. If you disagree with any of this, please bring it up on our Slack page, and we'll discuss/amend. Also, if you are not familiar with Github, PLEASE CONSULT with a team member who is so as not to mistakenly break something.
+Here are some proposed basic ground rules for us, in terms of software practices. **PLEASE READ THIS CAREFULLY**. If you disagree with any of this, please bring it up on our Slack page, and we'll discuss/amend. Also, if you are not familiar with Github, **PLEASE CONSULT** with a team member who is so as not to mistakenly break something.
 
-## I. "master" branch
+## I. `master` branch
 
-Consider "master" to be the branch that we submit at the end of the semester. As such, NOTHING gets pushed there unless it has been *THOROUGHLY TESTED* and deemed stable by the project manager (PM). In fact, I propose that *ONLY THE PM* has the right to push to "master".
+Consider "master" to be the branch that we submit at the end of the semester. As such, **NOTHING** gets pushed there unless it has been **THOROUGHLY TESTED** and deemed stable by the project manager (PM). In fact, I propose that **ONLY THE PM** has the right to push to `master`.
 
-## II. "dev" branch
+## II. `dev` branch
 
-"dev" is the branch where we *ASSEMBLE* our latest version at any given point. As such, *DO NOT DEVELOP* on this branch. You should be developing/testing your piece(s) in a separate branch *OFF OF* "dev". When you feel like you have successfully implemented and tested all of the functionality in your branch, you are ready to merge your branch with "dev." (see IV.)
+`dev` is the branch where we **ASSEMBLE** our latest version at any given point. As such, **DO NOT DEVELOP** on this branch. You should be developing/testing your piece(s) in a separate branch **OFF OF** `dev`. When you feel like you have successfully implemented and tested all of the functionality in your branch, you are ready to merge your branch with `dev.` (see IV.)
 
-## III. Individual Branches Off of "dev"
+## III. Individual Branches Off of `dev`
 
 Note that these have not been created yet, but will be soon once we've established who is writing what. The rules here are pretty freeform, commit and push your regular work to your individual branch(es), and try to maintain consistent documentation (see V. and VI.) This is where the majority of your time is expected to be spent.
 
-## IV. Merging into "dev"
+## IV. Merging into `dev`
 
-Once you have finished writing and testing your feature in your individual branch, and you are confident that it is ready to be used by others, you can merge it into "dev". When you do this, you should have a *THOROUGH, DESCRIPTIVE* message that details what it is that you're adding, a well-commented API of your piece, example usage, and any potential issues that you foresee.
+Once you have finished writing and testing your feature in your individual branch, and you are confident that it is ready to be used by others, you can merge it into `dev`. When you do this, you should have a **THOROUGH, DESCRIPTIVE** message that details what it is that you're adding, a well-commented API of your piece, example usage, and any potential issues that you foresee.
 
-Further, I propose that when you do this, you also *NOTIFY THE ENTIRE TEAM* (by email or Slack) that you merged with "dev." Everyone can then update their individual branches by pulling from "dev". Ideally, work continues uninterrupted for everyone, and you can pick up the next part of the project in a new individual branch. Realistically, something breaks for someone after they pulled, and it is then your responsibility to collaborate with said someone to resolve the issue. 
+Further, I propose that when you do this, you also **NOTIFY THE ENTIRE TEAM** (by email or Slack) that you merged with `dev`. Everyone can then update their individual branches by pulling from `dev`. Ideally, work continues uninterrupted for everyone, and you can pick up the next part of the project in a new individual branch. Realistically, something breaks for someone after they pulled, and it is then your responsibility to collaborate with said someone to resolve the issue. 
 
 ## V. Commit messages
 
@@ -68,6 +68,6 @@ class Token:
 		return self.length
 ```
 
-When merging with dev, come up with an "extra good" version of this for the API you are giving to other teammates. We want to make it as easy as possible to utilize each other's code. Example usage in a fake `main()` method goes a long way.
+When merging with `dev`, come up with an "extra good" version of this for the API you are giving to other teammates. We want to make it as easy as possible to utilize each other's code. Example usage in a fake `main()` method goes a long way.
 
 With all this said, let's have a great time and build something **AWESOME**.
