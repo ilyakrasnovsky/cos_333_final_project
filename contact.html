@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Team Info for 
+  Assignment Calendars COS 333 Project</title>
+  <meta name="description" content="Team Info for 
+  Assignment Calendars COS 333 Project">
+  <meta name="author" content="Ilya Krasnovsky">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href='http://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+  
+   <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="fonts/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/magnific-popup.css">
+  
+  <!-- Scripts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->  
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  	
+  <!-- Wrench icon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="images/wrenchicon.png">
+
+</head>
+<body>
+
+<header class="main_nav black">
+	<div class="container">
+		<div class="twelve columns">
+			<div class="logo"><a href="index.html">The Team</a></div>
+		</div>
+	</div>
+</header>
+
+<div class="container main">
+	<div class="row">
+		<div class="six columns portfolio">
+			<center>
+			<img class="avatar" src="images/andrea.jpg" />
+			<h2 class="label">Andrea Malleo | Project Leader</h2>
+			<h1 class="label">amalleo@princeton.edu</h1>
+			</center>
+		</div>
+		<div class="six columns portfolio">
+			<center>
+			<img class="avatar" src="images/tbd.jpeg" />
+			<h2 class="label">A Friendly COS TA | Project Manager</h2>
+			<h1 class="label">TBD</h1>
+			</center>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="four columns portfolio">
+			<center>
+			<img class="avatar" src="images/ilya.jpg"/>
+			<h2 class="label">Ilya Krasnovsky</h2>
+			<h1 class="label">ilyak@princeton.edu</h1>
+			</center>
+		</div>
+		<div class="four columns portfolio">
+			<center>
+			<img class="avatar" src="images/nick.jpg" />
+			<h2 class="label">Nick Maselli</h2>
+			<h1 class="label">nmaselli@princeton.edu</h1>
+			</center>
+		</div>
+		<div class="four columns portfolio">
+			<center>
+			<img class="avatar" src="images/gina.jpg" />
+			<h2 class="label">Gina Hong</h2>
+			<h1 class="label">ghong@princeton.edu</h1>
+			</center>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="twelve columns portfolio">
+			<center>
+			<ul class="social">
+			<li class="facebook"><a href="https://www.facebook.com/ilya.krasnovsky"><i class="fa fa-facebook-square fa-lg"></i></a></li>
+			<li class="linkedin"><a href="https://www.linkedin.com/pub/ilya-krasnovsky/78/32a/a12"><i class="fa fa-linkedin-square fa-lg"></i></a></li>
+			</ul>
+			</center>
+		</div>
+	</div>
+</div><!--Container-->
+
+<div class="row black">
+	<div class="container">
+		<div class="twelve columns">
+			<h2 class="bio">About the Project</h2>
+			<p class="bio">
+            The issue this project addresses is coordination of problem set collaboration. The goal of the project is to design a web application that will allow Princeton University students to view the assignment due dates for all of their classes on a visually appealing user interface. This interface displays time blocks proposed by other students during which to work on the assignment together. It allows the student to join an already existing time block or propose a new block of time to work on the current assignment throughout the week for other students to see. The application provides an informal and easy to use class-wide method of communication that encourages networking and collaboration with other students the user may not yet know and at the mutual convenience of everyone involved. This application sets out to accomplish two primary objectives: automatic organization of assignment due dates between multiple classes and convenient facilitation of peer collaboration with the hopes of increasing subject material understanding and problem set success.
+            </p>
+		</div>
+	</div>
+</div><!--Row Green-->
+	
+<footer>
+	<div class="container">
+		<div class="row twelve columns">
+			<p class="copyright">&copy; 2016 Assignment Calendars. All Rights Reserved.</p>
+		</div>
+	</div>
+</footer>
+	
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <script src="scripts/jquery.magnific-popup.js"></script>
+  <script type="text/javascript">
+	 $('.image-link').magnificPopup({ 
+  type: 'image',
+  mainClass: 'mfp-with-zoom', // this class is for CSS animation below
+
+  zoom: {
+    enabled: true, // By default it's false, so don't forget to enable it
+
+    duration: 300, // duration of the effect, in milliseconds
+    easing: 'ease-in-out', // CSS transition easing function 
+
+    // The "opener" function should return the element from which popup will be zoomed in
+    // and to which popup will be scaled down
+    // By defailt it looks for an image tag:
+    opener: function(openerElement) {
+      // openerElement is the element on which popup was initialized, in this case its <a> tag
+      // you don't need to add "opener" option if this code matches your needs, it's defailt one.
+      return openerElement.is('img') ? openerElement : openerElement.find('img');
+    }
+  }
+
+});	</script>
+</body>
+</html>
