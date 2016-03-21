@@ -1,3 +1,10 @@
+'''
+module : Google Calendar API Utilities
+
+provides classes/functions helpful for managing our Google
+calendars via their API
+
+'''
 from __future__ import print_function
 import httplib2
 import os
@@ -19,17 +26,20 @@ except ImportError:
 # at ~/.credentials/calendar-python-webapp.json
 SCOPES = 'https://www.googleapis.com/auth/calendar'
 CLIENT_SECRET_FILE = 'client_secret.json'
-APPLICATION_NAME = 'Google Calendar API Python WebApp'
+APPLICATION_NAME = 'COS 333 Assignment Calendars'
 
+'''
+function : get_credentials()
+
+-Gets valid user credentials from storage.
+
+-If nothing has been stored, or if the stored credentials are invalid,
+the OAuth2 flow is completed to obtain the new credentials.
+
+Returns:
+    Credentials, the obtained credential.
+'''
 def get_credentials():
-    """Gets valid user credentials from storage.
-
-    If nothing has been stored, or if the stored credentials are invalid,
-    the OAuth2 flow is completed to obtain the new credentials.
-
-    Returns:
-        Credentials, the obtained credential.
-    """
     home_dir = os.path.expanduser('~')
     credential_dir = os.path.join(home_dir, '.credentials')
     if not os.path.exists(credential_dir):
@@ -49,12 +59,23 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
-def main():
-    """Shows basic usage of the Google Calendar API.
 
-    Creates a Google Calendar API service object and outputs a list of the next
-    10 events on the user's calendar.
-    """
+
+
+
+
+'''
+function main()
+
+tester client that shows basic usage of the Google Calendar API.
+
+Creates a Google Calendar API service object and outputs a list of the next
+10 events on the user's calendar.
+
+'''
+def main():
+    #Creates a Google Calendar API service object from our
+    #credentials
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)
