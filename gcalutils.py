@@ -59,10 +59,129 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
+'''
+function : new_calendar()
 
+creates a new Google Calendar on the account associated with
+our credentials (should be assigncalscos333@gmail.com /p chrismoretti)
 
+inputs : 
+    title : title (typically a String like "MAE 433")
+    descr : description (typically a String like "Problem Set
+                            Calendar for MAE 433")
 
+outputs :
+    new_created_cal : a dictionary representation of the newly
+                      created calendar, or None if title already
+                      taken
+'''
+def new_calendar(title, descr):
+    #princeton_orange = "#FF8F00"
+    new_created_cal = None
+    if (get_calendar(title) == None):
+        new_cal = {
+        "kind": "calendar#calendar", # Type of the resource ("calendar#calendar").
+        "description": descr, # Description of the calendar. Optional.
+        "summary": title, # Title of the calendar.
+        #"etag": "A String", # ETag of the resource.
+        "location": "Princeton, NJ, USA", # Geographic location of the calendar as free-form text. Optional.
+        "timeZone": "America/New_York", # The time zone of the calendar. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional.
+        #"id": "A String", # Identifier of the calendar. To retrieve IDs call the calendarList.list() method.
+                }
+        #Programtically create a new calendar using the insert()
+        # from calendars() request
+        #FORMAT MUST BE A DICT, NOT JSON, AND THEREFORE NO COMMENTS
+        new_cal_req = service.calendars().insert(body=new_cal)
+        new_created_cal = new_cal_req.execute()
+    return new_created_cal
 
+'''
+function : get_calendar()
+
+retrieve an existing Google Calendar on the account associated with
+our credentials (should be assigncalscos333@gmail.com /p chrismoretti)
+
+inputs : 
+    title : title (typically a String like "MAE 433")
+    
+outputs :
+    cal : a dictionary representation of the located
+          calendar, or None if no calendar with this title
+          exists
+'''
+def get_calendar(title):
+    #HTTP request for a list of the user's calendars
+    usr_cals_req = service.calendarList().list() 
+    #Execute the request, returns data in an object we call usr_cals
+    usr_cals = usr_cals_req.execute()
+    #Extract a particular calendar id by name
+    calid = None
+    calname = title
+    for i in usr_cals['items']:
+        if (i['summary'] == calname):
+            calid = i['id']
+            break
+
+    #Use the extracted id to get the calender object via the get() request
+    if (calid != None):
+        cal_byid_req = service.calendarList().get(calendarId=calid)
+        cal = cal_byid_req.execute()
+        return cal
+    else:
+        return None
+
+'''
+function : add_event()
+
+adds an event with the specified information to a particular
+calendar
+
+inputs:
+    calname : name of calendar to add event to (string)
+    title   : title of event (string)
+    location : location of event (string)
+    descr    : description of event (string)
+    start    : start time (formatted string)
+    end      : end time (formatted string)
+
+outputs:
+    event : dictionary representation of the newly created
+            event, or None if calendar does not exist 
+'''
+def add_event(calname,title,location, descr, start, end):
+    event = None
+    calendar = get_calendar(calname)
+    if (calendar != None):
+        new_event = {
+              'summary': title,
+              'location': location,
+              'description': descr,
+              'start': {
+                'dateTime': start,
+                'timeZone': 'America/New_York',
+              },
+              'end': {
+                'dateTime': end,
+                'timeZone': 'America/New_York',
+              },
+              #'recurrence': [
+              #  'RRULE:FREQ=DAILY;COUNT=2'
+              #],
+              #'attendees': [
+              #  {'email': 'lpage@example.com'},
+              #  {'email': 'sbrin@example.com'},
+              #],
+              'reminders': {
+                'useDefault': False,
+                'overrides': [
+                  {'method': 'email', 'minutes': 24 * 60},
+                  {'method': 'popup', 'minutes': 10},
+                ],
+              },
+            }
+        add_event_req = service.events().insert(calendarId=calendar['id'], body=new_event)
+        event = add_event_req.execute()
+    return event
 
 '''
 function main()
@@ -89,7 +208,7 @@ def main():
     usr_cals_req = service.calendarList().list()
     
     #Execute the request, returns data in an object we call usr_cals
-    usr_cals = usr_cals_req.execute()    
+    usr_cals = usr_cals_req.execute()
     
     #Iterate over the "items" field of usr_cals and print the "summary"
     #field of each item, which corresponds to printing the name of each
@@ -234,8 +353,7 @@ def main():
         print('No upcoming events found.')
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
-        #print (event)
-        #print(start, event['summary'])
+        print(start, event['summary'])
 
 
 if __name__ == '__main__':
