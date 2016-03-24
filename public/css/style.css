@@ -1,0 +1,132 @@
+/* Table of Contents
+––––––––––––––––––––––––––––––––––––––––––––––
+- General Content
+- Typography
+- Header & Navigation
+- Images & Media
+- Footer
+- Media Queries
+–––––––––––––––––––––––––––––––––––––––––––––– */
+
+/* General Content
+–––––––––––––––––––––––––––––––––––––––––––––– */
+.main{padding-top:3%;}
+.row{padding: 2% 0;}
+.black{background-color:#000;}
+
+/* Typography
+–––––––––––––––––––––––––––––––––––––––––––––– */
+body{
+	font-family: 'Roboto',sans-serif;
+	font-size: 1.5em;
+	color: #000;
+}
+h2{
+	font-family: 'Roboto', sans-serif;
+	font-size: 2em;
+	margin: 0em;
+}
+
+h1{
+	font-family: 'Roboto', sans-serif;
+	font-size: 1.5em;
+	margin: 0em;
+}
+
+h2.bio{
+	color:#FF8F00;
+	margin-bottom: 0.2em;
+}
+
+h2.logosub{
+	font-size: 3em;
+	/*margin: 2% auto;
+	text-align: center;*/
+	color: #FFF;
+}
+
+h2.label{margin: 0em;}
+h2.resume{color: #FF8F00;}
+span.orangetext{color: #FF8F00;}
+p.bio{color: #fff;}
+p.description{color: #000;}
+
+/* Header & Navigation
+–––––––––––––––––––––––––––––––––––––––––––––– */
+header.main_nav{
+	padding: 1% 0;
+	display: block;
+}
+.logo{
+	margin: 2% auto;
+	text-align: center;
+}
+
+.logo a{
+	font-size: 3em;
+	color: #FF8F00;
+	text-decoration: none;
+	/*border: 3px solid #FF8F00;*/
+	/*text-transform: uppercase;*/
+	padding: 2px 10px 0 10px;
+	margin: 0;
+}
+.logo a:hover{
+	background-color: #000;
+	color: #FFF;
+	/*border: 3px solid #FFF;*/
+}
+/* Images & Media
+–––––––––––––––––––––––––––––––––––––––––––––– */
+img{max-width: 100%;}
+img.avatar{
+	border-radius: 400px;
+	border: 5px solid #FF8F00;
+}
+img:hover{opacity:0.8;}
+img.avatar:hover{opacity:1;}
+
+video{max-width: 100%;}
+iframe{max-width: 100%;}
+
+/* Footer
+–––––––––––––––––––––––––––––––––––––––––––––– */
+ul.social{
+	display: block;
+	margin: 1% 0;
+	list-style-type: none;
+	text-align: center;
+}
+ul.social li{
+	font-size: 3em;
+	display: inline;
+	padding: 0 2%;
+}
+ul.social li a{
+	color: #666;
+}
+ul.social li.facebook a:hover{color: rgb(59,89,152);}
+ul.social li.twitter a:hover{color: rgb(0,172,237);}
+ul.social li.instagram a:hover{color: rgb(81,127,237);}
+ul.social li.youtube a:hover{color: rgb(187,0,0);}
+ul.social li.flickr a:hover{color: rgb(255,0, 132);}
+ul.social li.linkedin a:hover{color: rgb(0, 123,182);}
+
+p.copyright{
+	text-align: center;
+	color: #666;
+	font-size: 1em;
+}
+
+/* Media Queries
+–––––––––––––––––––––––––––––––––––––––––––––– */
+/* Larger than mobile */
+@media (max-width: 479px) {
+	.logo a{font-size: 2em;}
+	.main{padding-top:15%;}
+	.portfolio img{margin-bottom: 10%;}
+	img.avatar{margin-top: 15%;}
+	h2.bio{font-size: 2.5em;}
+	p.bio{font-size: 1.25em; color: #FFF;}
+	ul.social li a{font-size: .75em;}
+}
