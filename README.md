@@ -26,7 +26,8 @@ for SECRET_KEY and FIREBASE_KEY.
 `$ python localcreds.py 'SECRET_KEY_CODE_HERE' 'FIREBASE_KEY_CODE_HERE'`
 Note the quotes around both, and the order of the two
 9. You can now develop!
-10. To test locally, you have two options (both in the `/project` directory):
+10. To test locally, you have two options:
+
 	`$ python manage.py runserver` (the Django way, app will be on localhost:8000)
 
 	OR
