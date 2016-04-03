@@ -2,6 +2,12 @@
 __pycache__/
 *.py[cod]
 *$py.class
+project/__pycache__/
+project/*.py[cod]
+project/*$py.class
+assigncal/__pycache__/
+assigncal/*.py[cod]
+assigncal/*$py.class
 
 # C extensions
 *.so
