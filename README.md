@@ -13,8 +13,8 @@ Hosted on heroku
 
 (I'm assuming you have cloned this repository already)
 
-1. Create this branch locally via `$ git branch dev`
-2. Switch to this branch via `$ git checkout dev`
+1. Create this branch locally via `$ git branch dev-SOME_NAME_HERE`
+2. Switch to this branch via `$ git checkout dev-SOME_NAME_HERE`
 3. Pull from the remote via `$ git pull origin dev`
 4. If you have a virtual environment setup, activate it now.
 5. Install dependencies via `$ pip install -r requirements.txt`
@@ -33,6 +33,11 @@ Note the quotes around both, and the order of the two
 	OR
 
 	`$ heroku local` (the Heroku way, app will be on localhost:5000)
+
+11. While you're developing, and not ready to push to `dev`, save to your branch via:
+	`$ git add -A`
+	`$ git commit -m "COMMIT_MESSAGE_HERE"`
+	`$ git push origin dev-SOME_NAME_HERE`
 
 ## DEPLOYMENT INSTRUCTIONS TO HEROKU
 
