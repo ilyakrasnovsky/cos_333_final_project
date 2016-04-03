@@ -1,6 +1,17 @@
+<<<<<<< HEAD
 # `dev` branch
 
 Development branch, latest stable releases here
+=======
+# `dev-init` branch
+
+This is the branch for the initial setup of our web app. Final
+choice stack?
+
+HTML/CSS/Vanilla Javascript <--> Django <--> Python <--> Firebase
+
+Hosted on heroku
+>>>>>>> dev-init
 
 ## INITIAL SETUP FOR LOCAL DEVELOPMENT
 
@@ -9,9 +20,17 @@ Development branch, latest stable releases here
 1. Create this branch locally via `$ git branch dev-init`
 2. Switch to this branch via `$ git checkout dev-init`
 3. Pull from the remote via `$ git pull origin dev-init`
+<<<<<<< HEAD
 4. If you have a virtual environment setup, activate it now.
 5. Install dependencies via `$ pip install -r requirements.txt`
 6. Go to the 
 
 ## DEPLOYMENT INSTRUCTIONS TO HEROKU
 
+=======
+4. If you have a virtual environment setup up, activate it now.
+5. Install dependencies via `$ pip install -r requirements.txt`
+6. 
+
+## DEPLOYMENT INSTRUCTIONS TO HEROKU
+>>>>>>> dev-init
