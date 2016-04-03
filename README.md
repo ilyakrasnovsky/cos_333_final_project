@@ -1,1 +1,3 @@
-# cos_333_final_project
+# `dev-calAPI` branch
+
+development of Google Calendar API functionality
