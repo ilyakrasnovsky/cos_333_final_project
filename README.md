@@ -1,6 +1,6 @@
 # COS 333 Final Project
 
-## Functionality (TBD)
+## `master` branch
 
 ## Programming Practice Team Rules
 
