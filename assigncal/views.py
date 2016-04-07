@@ -21,7 +21,6 @@ def cal(request):
 @ensure_csrf_cookie
 def save(request):
     if (request.method == 'POST'):
-        print ("DATA on server : " + request.POST.dict()['starttime'])
         backend.add_to_db({"name" : "lol", "payload": request.POST.dict()})
         return render(request, 'assigncal/cal.html')
 
