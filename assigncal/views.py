@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 import backend
 
 from .forms import NameForm
 from assigncal.models import DJStudent, DJCourse, Student, Course
 
+@ensure_csrf_cookie
 def cal(request):
     #items = Item.objects.exclude(amount=0)
     #dict to send to template
@@ -16,9 +18,10 @@ def cal(request):
     context = {'title' : "DjangoAlex"}
     return render(request, 'assigncal/cal.html', context)
 
+@ensure_csrf_cookie
 def save(request):
     if (request.method == 'POST'):
-        #print (request.POST.dict()['starttime'])
+        print ("DATA on server : " + request.POST.dict()['starttime'])
         backend.add_to_db({"name" : "lol", "payload": request.POST.dict()})
         return render(request, 'assigncal/cal.html')
 

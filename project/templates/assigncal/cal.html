@@ -52,19 +52,8 @@
 			selectable: true,
 			selectHelper: true,
 			select: function(start, end, jsEvent, view) {
-    			//alert("The view's name is " + view.name);
-				//alert("start is " + start.stripTime().format());
-				//alert("end is " + end.stripTime().format());
-				//alert("start is " + start.format());
-				//alert("end is " + end.format());
-				var starttime = start.format();
+    			var starttime = start.format();
 				$.post('/save', {'starttime': starttime})
-			
-				/*	
-			    ajaxPost('/save', {'starttime': starttime}, function(content){
-			    	//alert(content);
-			    })
-				*/
 				if (view.name == 'month')
 				{
 					$('#calendar').fullCalendar('gotoDate',start);
