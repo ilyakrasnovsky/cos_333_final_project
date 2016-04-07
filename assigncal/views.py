@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
+from django.views.decorators.csrf import ensure_csrf_token
 
 import backend
 
@@ -16,6 +17,7 @@ def cal(request):
     context = {'title' : "DjangoAlex"}
     return render(request, 'assigncal/cal.html', context)
 
+@ensure_csrf_token
 def save(request):
     if (request.method == 'POST'):
         #print (request.POST.dict()['starttime'])
