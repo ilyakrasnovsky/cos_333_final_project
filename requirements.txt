@@ -1,5 +1,6 @@
 Django==1.9.2
 argparse==1.2.1
+djangoajax==2.3.3
 gunicorn==19.4.5
 psycopg2==2.6.1
 python-firebase==1.2
