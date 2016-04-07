@@ -10,14 +10,7 @@
 <script src='../../static/fullcalendar.min.js'></script>
 
 <script>
-	/*
-	{% load staticfiles%}
-	
-	<script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax.min.js' %}"></scrip>
 
-	<script type="text/javascript" src="{% static 'jquery.ajax.min.js' %}"></scrip>
-	
-	*/
 	var mytitle = "{{title|escapejs|safe}}";
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
@@ -38,7 +31,7 @@
 				//alert("start is " + start.format());
 				//alert("end is " + end.format());
 				var starttime = start.format();
-				$.post('/save', {'starttime': starttime})
+				//$.post('/save', {'starttime': starttime})
 				/*
 			    ajaxPost('/save', {'starttime': starttime}, function(content){
 			    	//alert(content);
@@ -123,7 +116,7 @@
 					id : 0
 				},
 				{
-					title: mytitle, //'Alex',
+					title: mytitle,
 					start: '2016-01-12',
 					textColor : "white",
 					color : 'black'
