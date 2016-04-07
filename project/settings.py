@@ -24,7 +24,7 @@ def SECRET_KEYS(deploy):
 (SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS('REMOTE')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Application definition
 INSTALLED_APPS = (
