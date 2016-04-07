@@ -8,8 +8,12 @@
 <script src='../../static/moment.min.js'></script>
 <script src='../../static/jquery.min.js'></script>
 <script src='../../static/fullcalendar.min.js'></script>
+<script src='../../static/ajaxjquery/jquery.ajax.min.js'></script>
 <script>
-
+	/*
+	goes up top {% load staticfiles%}
+	<script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax.min.js' %}"></scr*/
+	var mytitle = "{{title|escapejs|safe}}";
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
 			theme: true,
@@ -26,6 +30,13 @@
     			//alert("The view's name is " + view.name);
 				//alert("start is " + start.stripTime().format());
 				//alert("end is " + end.stripTime().format());
+				//alert("start is " + start.format());
+				//alert("end is " + end.format());
+				var starttime = start.format();
+			    ajaxPost('/save', {'starttime': starttime}, function(content){
+			    	//alert(content);
+			    })
+				
 				if (view.name == 'month')
 				{
 					$('#calendar').fullCalendar('gotoDate',start);
@@ -105,7 +116,7 @@
 					id : 0
 				},
 				{
-					title: 'Alex',
+					title: mytitle, //'Alex',
 					start: '2016-01-12',
 					textColor : "white",
 					color : 'black'

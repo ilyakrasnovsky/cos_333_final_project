@@ -10,6 +10,7 @@ urlpatterns = [
     #cascades down in order
     #extra params are passed 
     url(r'^$', views.cal, name='cal'),
+    url(r'^save', views.save, name='save'),
     #<> --> named group
     #url(r'^item/(?P<id>\d+)/', views.item_detail, name = 'item_detail'),
     #url(r'^entry/', views.entry, name = 'entry'),

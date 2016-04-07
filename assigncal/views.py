@@ -10,10 +10,17 @@ def cal(request):
     #items = Item.objects.exclude(amount=0)
     #dict to send to template
     #context = {'items': items}
-    backend.add_to_db({'name' : 'string', 'payload' : 'stuff'})
+    #backend.add_to_db({'name' : 'string', 'payload' : 'stuff'})
     #context = {'items' : backend.get_from_db('string')}
     #path starts at project/templates/
-    return render(request, 'assigncal/cal.html')
+    context = {'title' : "DjangoAlex"}
+    return render(request, 'assigncal/cal.html', context)
+
+def save(request):
+    if (request.method == 'POST'):
+        #print (request.POST.dict()['starttime'])
+        backend.add_to_db({"name" : "lol", "payload": request.POST.dict()})
+        return render(request, 'assigncal/cal.html')
 
 '''
 def item_detail(request, id):
