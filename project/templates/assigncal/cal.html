@@ -12,8 +12,10 @@
 <script src='../../static/jquery.ajax.min.js'></script>
 <script>
 	/*
+	<script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax.min.js' %}"></scrip>
+
 	goes up top {% load staticfiles%}
-	<script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax.min.js' %}"></scr*/
+	*/
 	var mytitle = "{{title|escapejs|safe}}";
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
