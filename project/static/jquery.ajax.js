@@ -23,7 +23,7 @@ function getCookie(name) {
 var csrftoken = getCookie('csrftoken');
 
 $.ajaxSetup({
-    crossDomain: true // obviates need for sameOrigin test
+    crossDomain: false // obviates need for sameOrigin test
 });
 
 var ajax = function (url, options) {
@@ -51,7 +51,7 @@ var ajax = function (url, options) {
         type: options.method || 'get',
         data: options.data,
         beforeSend: function (xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)){
                 // Send the token to same-origin, relative URLs only.
                 // Send the token only if the method warrants CSRF protection
                 // Using the CSRFToken value acquired earlier
