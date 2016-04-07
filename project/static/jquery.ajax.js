@@ -23,7 +23,7 @@ function getCookie(name) {
 var csrftoken = getCookie('csrftoken');
 
 $.ajaxSetup({
-    crossDomain: false // obviates need for sameOrigin test
+    crossDomain: true // obviates need for sameOrigin test
 });
 
 var ajax = function (url, options) {
