@@ -1,0 +1,370 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link rel="stylesheet" href="{% static 'project/style.css' %}" />
+<link rel='stylesheet' href="{% static 'project/Calendar/UIDarkness/jquery-ui.min.css' %}"/>
+<link rel='stylesheet' href="{% static 'project/Calendar/fullcalendar.print.css' %}"  media='print' />
+<link rel='stylesheet' href="{% static 'project/Calendar/fullcalendar.css' %}" />
+
+<script src="{% static 'project/Calendar/lib/jquery.min.js' %}"></script>
+<script src="{% static 'project/Calendar/lib/moment.min.js' %}"></script>
+<script src="{% static 'project/Calendar/fullcalendar.min.js' %}"></script>
+
+<script>
+
+	$(document).ready(function() {
+		$('#calendar').fullCalendar({
+			theme: true,
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+			},
+			defaultDate: '2016-01-12',
+			defaultView: 'month',
+			selectable: true,
+			selectHelper: true,
+			select: function(start, end, jsEvent, view) {
+    			//alert("The view's name is " + view.name);
+				//alert("start is " + start.stripTime().format());
+				//alert("end is " + end.stripTime().format());
+				if (view.name == 'month')
+				{
+					$('#calendar').fullCalendar('gotoDate',start);
+					$('#calendar').fullCalendar('changeView','agendaDay');	
+				}
+				/*
+				var title = prompt('Event Title:');
+				var eventData;
+				if (title) {
+					eventData = {
+						title: title,
+						start: start,
+						end: end
+					};
+					$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+				}
+				$('#calendar').fullCalendar('unselect');
+				*/
+			},
+			
+			eventMouseover: function( event, jsEvent, view ) 
+			{ 
+				
+				if (view.name == 'month')
+				{
+					//alert('hi')
+					$('#calendar').fullCalendar('eventLimitClick', 'popover');
+				}
+			},
+			/*
+			eventLimitClick : function( cellInfo, jsEvent )
+			{
+				"popover";
+				//alert(cellInfo.segs[0].event.title);
+			},
+			*/
+			/*
+			eventClick: function(calEvent, jsEvent, view) {
+        		alert('Event: ' + calEvent.title);
+    		},
+    		dayClick: function(date, jsEvent, view) {
+        		alert('Clicked on: ' + date.format());
+        		alert("The view's name is " + view.name);
+    		},*/
+			editable: false,
+			//slotEventOverlap: false,
+			eventLimit: true, // allow "more" link when too many events
+			eventOrder : "id,title",
+			eventLimitText : function(num)
+			{
+				return "See Names"
+			},
+			views: 
+			{
+		        month: 
+	        	{
+	        		eventLimit: 2 // adjust to 6 only for agendaWeek/agendaDay	
+		        },
+		        agenda:
+		        {
+		        	eventLimit: false
+		        }
+    		},
+			//eventColor : 'green',//'#f58400',
+			eventTextColor : 'black',
+			events: [
+				{
+					title: '4 people',
+					rendering: 'background',
+					start: '2016-01-12',
+					color : '#568203'
+				},
+				{
+					title: '4 people',
+					start: '2016-01-12',
+					color : '#568203',
+					id : 0
+				},
+				{
+					title: 'Alex',
+					start: '2016-01-12',
+					textColor : "white",
+					color : 'black'
+				},
+				{
+					title: 'Betty',
+					start: '2016-01-12',
+					textColor : "white",
+					color : 'black'
+				},
+				{
+					title: 'Chloe',
+					start: '2016-01-12',
+					textColor : "white",
+					color : 'black'
+				},
+				{
+					title: 'Mark',
+					start: '2016-01-12',
+					textColor : "white",
+					color : 'black'
+				},
+				{
+					title: 'Block1',
+					rendering: 'background',
+					start: '2016-01-12T10:30:00',
+					end: '2016-01-12T11:00:00',
+					color : 'red',
+					id : 1
+				},
+				{
+					title: 'Block2',
+					rendering: 'background',
+					color : 'orange',
+					start: '2016-01-12T11:00:00',
+					end: '2016-01-12T11:30:00',
+					id : 2
+				},
+				{
+					title: 'Block3',
+					rendering: 'background',
+					color : 'yellow',
+					start: '2016-01-12T11:30:00',
+					end: '2016-01-12T12:00:00',
+					id : 3
+				},
+				{
+					title: 'Block4',
+					rendering: 'background',
+					start: '2016-01-12T12:00:00',
+					color : 'light green',
+					end : '2016-01-12T12:30:00',
+					id : 4
+				},
+				{
+					title: 'Block5',
+					rendering: 'background',
+					start: '2016-01-12T12:30:00',
+					color : 'green',
+					end : '2016-01-12T13:00:00',
+					id : 5
+				},
+				{
+					title: '2 people',
+					rendering: 'background',
+					start: '2016-01-13',
+					color : 'orange'
+				},
+								{
+					title: '2 people',
+					start: '2016-01-13',
+					color : 'orange',
+					id : 0
+				},
+				{
+					title: 'Alex',
+					start: '2016-01-13',
+					textColor : "white",
+					color : 'black'
+				},
+				{
+					title: 'Betty',
+					start: '2016-01-13',
+					textColor : "white",
+					color : 'black'
+				},
+				{
+					title: 'Block1',
+					rendering: 'background',
+					start: '2016-01-13T10:30:00',
+					end: '2016-01-13T11:00:00',
+					color : 'red',
+					id : 1
+				},
+				{
+					title: 'Block2',
+					rendering: 'background',
+					color : 'orange',
+					start: '2016-01-13T11:00:00',
+					end: '2016-01-13T11:30:00',
+					id : 2
+				},
+				{
+					title: 'Block3',
+					rendering: 'background',
+					color : 'yellow',
+					start: '2016-01-13T11:30:00',
+					end: '2016-01-13T12:00:00',
+					id : 3
+				},
+				{
+					title: 'Block4',
+					rendering: 'background',
+					start: '2016-01-13T12:00:00',
+					color : '#568203',
+					end : '2016-01-13T12:30:00',
+					id : 4
+				},
+				{
+					title: 'Block5',
+					rendering: 'background',
+					start: '2016-01-13T12:30:00',
+					color : 'green',
+					end : '2016-01-13T13:00:00',
+					id : 5
+				},
+				{
+					title: '3 people',
+					rendering: 'background',
+					start: '2016-01-14',
+					color : 'yellow'
+				},
+				{
+					title: '3 people',
+					start: '2016-01-14',
+					color : 'yellow',
+					id : 0
+				},
+				{
+					title: 'Alex',
+					start: '2016-01-14',
+					textColor : "white",
+					color : 'black'
+				},
+				{
+					title: 'Betty',
+					start: '2016-01-14',
+					textColor : "white",
+					color : 'black'
+				},
+				{
+					title: 'Chloe',
+					start: '2016-01-14',
+					textColor : "white",
+					color : 'black'
+				},
+				{
+					title: 'Assignment due',
+					rendering : "background",
+					start : '2016-01-16',
+					color : 'white'
+				},
+				{
+					title: 'Assignment 1 due',
+					start : '2016-01-16',
+					textColor : "black",
+					color : 'white',
+					id : 0
+				},
+				{
+					title: '1 people',
+					start : '2016-01-16',
+					textColor : "black",
+					color : 'white',
+					id : 9999
+				},
+				{
+					title: 'Chloe',
+					start: '2016-01-16',
+					textColor : "white",
+					color : 'black'
+				},
+				{
+					title: '1 people',
+					rendering: 'background',
+					start: '2016-01-15',
+					color : 'red'
+				},
+				{
+					title: '1 people',
+					start: '2016-01-15',
+					color : 'red',
+					id : 0
+				},
+				{
+					title: '',
+					start: '2016-01-15',
+					color : 'red',
+					id : 9999
+				},
+				{
+					title: 'Alex',
+					start: '2016-01-15',
+					textColor : "white",
+					color : 'black'
+				}
+				/*
+				{
+					title: 'Happy Hour',
+					start: '2016-01-12T17:30:00'
+				},
+				{
+					title: 'Dinner',
+					start: '2016-01-12T20:00:00'
+				},
+				
+				{
+					title: 'Click for Google',
+					url: 'http://google.com/',
+					start: '2016-01-28'
+				}
+				*/
+			]
+		});
+		
+	});
+
+</script>
+</head>
+
+<body>
+<div class="classes_section">
+	<div class="logo">
+	</div>
+	<ul class="class_list">
+		<li class="class_list"><a href="{% url 'project:test' %}">COS 333</a></li>
+		<li class="class_list"><a href="{% url 'project:test' %}">MAE 426</a></li>
+		<li class="class_list"><a href="{% url 'project:test' %}">MAE 342</a></li>
+		<li class="class_list"><a href="{% url 'project:test' %}">MAE-IW</a></li>
+	</ul>
+<!--{% if latest_question_list %}
+	<ul class="class_list">
+	{% for question in latest_question_list %}
+		<li class="class_list"><a href="{% url 'polls:detail' question.id %}"> {{question.question_text }}</a></li>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>No polls are available.</p>
+{% endif %}	-->
+</div>
+
+<div class="calendar_section">
+	<div id='calendar'>
+	</div>
+</div>
+</body>
+</html>
