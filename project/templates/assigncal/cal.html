@@ -9,13 +9,12 @@
 <script src='../../static/moment.min.js'></script>
 <script src='../../static/jquery.min.js'></script>
 <script src='../../static/fullcalendar.min.js'></script>
-<script src='../../static/jquery.ajax.min.js'></script>
+
 <script type="text/javascript" src="{% static 'jquery.ajax.min.js' %}"></script>
+
 <script>
 	/*
-	<script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax.min.js' %}"></scrip>
-
-	goes up top {% load staticfiles%}
+	<script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax.min.js' %}"></scrip>	
 	*/
 	var mytitle = "{{title|escapejs|safe}}";
 	$(document).ready(function() {
