@@ -1,4 +1,3 @@
-{% load staticfiles%}
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,11 +9,12 @@
 <script src='../../static/jquery.min.js'></script>
 <script src='../../static/fullcalendar.min.js'></script>
 
-<script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax.min.js' %}"></script>
-
 <script>
 	/*
+	{% load staticfiles%}
 	
+	<script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax.min.js' %}"></scrip>
+
 	<script type="text/javascript" src="{% static 'jquery.ajax.min.js' %}"></scrip>
 	
 	*/
@@ -38,10 +38,12 @@
 				//alert("start is " + start.format());
 				//alert("end is " + end.format());
 				var starttime = start.format();
+				$.post('/save', {'starttime': starttime})
+				/*
 			    ajaxPost('/save', {'starttime': starttime}, function(content){
 			    	//alert(content);
 			    })
-				
+				*/
 				if (view.name == 'month')
 				{
 					$('#calendar').fullCalendar('gotoDate',start);
