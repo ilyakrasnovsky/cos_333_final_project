@@ -7,6 +7,8 @@ FIREBASE_URL = settings.FIREBASE_URL
 FIREBASE_KEY = settings.FIREBASE_KEY
 authentication = firebase.FirebaseAuthentication(FIREBASE_KEY, 'ilyakrasnovsky@gmail.com', admin = True)
 fdb = firebase.FirebaseApplication(FIREBASE_URL, authentication=authentication)
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
+        'cas.backends.CASBackend',)
 
 #Add to db
 def add_to_db(stuff):

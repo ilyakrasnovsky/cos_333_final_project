@@ -4,6 +4,7 @@ Django Settings File
 import os
 import localcreds
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -21,10 +22,10 @@ def SECRET_KEYS(deploy):
 #Toggle 'LOCAL' if you're developing locally via $ heroku local
 #Be sure to run localcreds.py in the project directory before
 #developing locally! (instructions in localcreds.py source code) 
-(SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS('REMOTE')
+(SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS('LOCAL')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Application definition
 INSTALLED_APPS = (
@@ -35,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'assigncal',
+     'cas'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -46,6 +48,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'cas.middleware.CASMiddleware',
 )
 
 ROOT_URLCONF = 'project.urls'
@@ -93,6 +96,9 @@ AUTH_PASSWORD_VALIDATORS = (
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 )
+
+#CAS_SERVER_URL
+CAS_SERVER_URL = "https://fed.princeton.edu/cas/login?locale=en"
 
 #where our site is on the web
 SITE_URLS = { 

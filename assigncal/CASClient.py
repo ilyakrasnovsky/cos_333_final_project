@@ -2,7 +2,7 @@ import sys, os, cgi, urllib, re
 form = cgi.FieldStorage()
 class CASClient:
    def __init__(self):
-      self.cas_url = 'https://fed.princeton.edu/cas/'
+      self.cas_url = 'https://fed.princeton.edu/cas/login?locale=en'
    def Authenticate(self):
       # If the request contains a login ticket, try to validate it
       if form.has_key('ticket'):
@@ -25,14 +25,14 @@ class CASClient:
          return r[1].strip()
       return None
    def ServiceURL(self):
-      if os.environ.has_key('REQUEST_URI'):
-         ret = 'http://' + os.environ['HTTP_HOST'] + os.environ['REQUEST_URI']
-         ret = re.sub(r'ticket=[^&]*&?', '', ret)
-         ret = re.sub(r'\?&?$|&$', '', ret)
-         return ret
-         #$url = preg_replace('/ticket=[^&]*&?/', '', $url);
-         #return preg_replace('/?&?$|&$/', '', $url);
-      return "something is badly wrong"
+     # if os.environ.has_key('REQUEST_URI'):
+     #   ret = 'http://' + os.environ['HTTP_HOST'] + os.environ['REQUEST_URI']
+     #    ret = re.sub(r'ticket=[^&]*&?', '', ret)
+     #    ret = re.sub(r'\?&?$|&$', '', ret)
+     #    return ret
+      #    $url = preg_replace('/ticket=[^&]*&?/', '', $url);
+      #   return preg_replace('/?&?$|&$/', '', $url);
+	return "something is badly wrong"
  
 def main():
   print "CASClient does not run standalone"

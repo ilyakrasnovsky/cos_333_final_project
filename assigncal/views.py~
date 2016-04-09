@@ -5,10 +5,12 @@ import backend
 
 from .forms import NameForm
 from assigncal.models import DJStudent, DJCourse, Student, Course
+from . import CASscript
+from . import pycasclienttestscript
+from django.template import loader
 
 def cal(request):
-    netid = CASscript.main()
-    print netid
+
     #items = Item.objects.exclude(amount=0)
     #dict to send to template
     #context = {'items': items}
@@ -17,6 +19,13 @@ def cal(request):
     #path starts at project/templates/
     return render(request, 'assigncal/cal.html')
 
+def login(request):
+    template = loader.get_template('assigncal/login.html')
+    returned = pycasclienttestscript.main()
+    context = {"returned":returned}
+    #context =  {"netid":netid}
+    
+    return HttpResponse(template.render(context, request))
 '''
 def item_detail(request, id):
     try:
