@@ -11,7 +11,7 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 #Secret keys for heroku and firebase (deploy must be LOCAL or REMOTE)
 def SECRET_KEYS(deploy):
-    if (deploy == 'LOCAL'):
+    if (deploy == 'REMOTE'):
         return (localcreds.get_credentials(), localcreds.get_credentials(firebase=True))
     elif (deploy == 'REMOTE'):
         return (os.environ.get('SECRET_KEY'), os.environ.get('FIREBASE_KEY'))
@@ -25,7 +25,7 @@ def SECRET_KEYS(deploy):
 (SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS('LOCAL')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Application definition
 INSTALLED_APPS = (
