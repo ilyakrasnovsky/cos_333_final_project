@@ -9,6 +9,7 @@ from assigncal.models import DJStudent, DJCourse, Student, Course
 
 @ensure_csrf_cookie
 def cal(request):
+    #os.system('python setup.py')
     #items = Item.objects.exclude(amount=0)
     #dict to send to template
     #context = {'items': items}
