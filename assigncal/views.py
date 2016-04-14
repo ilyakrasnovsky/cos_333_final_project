@@ -16,13 +16,13 @@ def cal(request):
     #context = {'items' : backend.get_from_db('string')}
     #path starts at project/templates/
     context = {'title' : "DjangoAlex"}
-    return render(request, 'assigncal/cal.html', context)
+    return render(request, 'project/cal.html', context)
 
 @ensure_csrf_cookie
 def save(request):
     if (request.method == 'POST'):
         backend.add_to_db({"name" : "lol", "payload": request.POST.dict()})
-        return render(request, 'assigncal/cal.html')
+        return render(request, 'project/cal.html')
 
 '''
 def item_detail(request, id):
