@@ -1,6 +1,8 @@
 from django.test import TestCase, RequestFactory
 from django.test.utils import override_settings
 
+#DJANGO_SETTINGS_MODULE=
+
 from cas.views import _redirect_url, _login_url, _logout_url, _service_url
 
 

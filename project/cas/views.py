@@ -1,5 +1,6 @@
 import logging
 import datetime
+import sys
 
 try:
     from urllib import urlencode
@@ -23,7 +24,11 @@ from cas.models import PgtIOU
 __all__ = ['login', 'logout']
 
 logger = logging.getLogger(__name__)
-
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 def _service_url(request, redirect_to=None, gateway=False):
     """
@@ -71,7 +76,7 @@ def _service_url(request, redirect_to=None, gateway=False):
             service += urlencode(sorted_params)
         else:
             service += urlencode({REDIRECT_FIELD_NAME: redirect_to})
-
+    
     return service
 
 
@@ -158,7 +163,6 @@ def login(request, next_page=None, required=False, gateway=False):
     :param: gateway Gatewayed response
 
     """
-
     if not next_page:
         next_page = _redirect_url(request)
 
@@ -171,9 +175,12 @@ def login(request, next_page=None, required=False, gateway=False):
         service = _service_url(request, next_page, True)
     else:
         service = _service_url(request, next_page, False)
-
+	
     if ticket:
         user = auth.authenticate(ticket=ticket, service=service)
+        #user = auth.authenticate(ticket=ticket, service="http://localhost:5000")
+ 	#user = auth.authenticate(username=user, password=passw)
+	#user = auth.authenticate(username="amalleo", password="Sc4r1ettH0llyw00d")
 
         if user is not None:
 
@@ -199,7 +206,7 @@ def login(request, next_page=None, required=False, gateway=False):
             if getattr(settings, 'CAS_CUSTOM_FORBIDDEN'):
                 return HttpResponseRedirect(reverse(settings.CAS_CUSTOM_FORBIDDEN) + "?" + request.META['QUERY_STRING'])
             else:
-                error = "<h1>Forbidden</h1><p>Login failed.</p>"
+                error = "<h1>Forbidden</h1><p>FORBIDDEN FORBIDDEN FORBIDDEN.</p>"
                 return HttpResponseForbidden(error)
     else:
         if gateway:

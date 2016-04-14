@@ -22,10 +22,10 @@ def SECRET_KEYS(deploy):
 #Toggle 'LOCAL' if you're developing locally via $ heroku local
 #Be sure to run localcreds.py in the project directory before
 #developing locally! (instructions in localcreds.py source code) 
-(SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS('REMOTE')
+(SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS('LOCAL')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Application definition
 INSTALLED_APPS = (
@@ -49,6 +49,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'cas.middleware.CASMiddleware',
+    'django.contrib.auth.middleware.RemoteUserMiddleware',
 )
 
 ROOT_URLCONF = 'project.urls'
@@ -98,7 +99,10 @@ AUTH_PASSWORD_VALIDATORS = (
 )
 
 #CAS_SERVER_URL
-CAS_SERVER_URL = "https://fed.princeton.edu/cas/login?locale=en"
+CAS_SERVER_URL = "https://fed.princeton.edu/cas/login"
+CAS_LOGOUT_COMPLETELY = True
+CAS_PROVIDE_URL_TO_LOGOUT = True
+#CAS_RETRY_LOGIN = True
 
 #where our site is on the web
 SITE_URLS = { 
