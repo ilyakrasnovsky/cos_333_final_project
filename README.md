@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # COS 333 Final Project
 
 ## `master` branch
@@ -75,3 +76,8 @@ class Token:
 When merging with `dev`, come up with an "extra good" version of this for the API you are giving to other teammates. We want to make it as easy as possible to utilize each other's code. Example usage in a fake `main()` method goes a long way.
 
 With all this said, let's have a great time and build something **AWESOME**.
+=======
+# `dev-ilya` branch
+
+Ilya's branch off of dev
+>>>>>>> 9c4e49d2be6902b33782d32448aafeb59266f1c6
