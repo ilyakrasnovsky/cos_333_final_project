@@ -21,7 +21,7 @@ def SECRET_KEYS(deploy):
 #Toggle 'LOCAL' if you're developing locally via $ heroku local
 #Be sure to run localcreds.py in the project directory before
 #developing locally! (instructions in localcreds.py source code) 
-(SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS('LOCAL')
+(SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS('REMOTE')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False

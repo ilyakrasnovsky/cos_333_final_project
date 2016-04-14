@@ -10,7 +10,7 @@
 <script src='../../static/fullcalendar.min.js'></script>
 <script src='../../static/csrfcookie.js'></script>
 <script>
-	
+	alert("Your netid is : {{netid|escapejs|safe}}")	
 	var mytitle = "{{title|escapejs|safe}}";
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({

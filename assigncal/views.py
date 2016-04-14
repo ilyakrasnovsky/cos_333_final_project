@@ -3,6 +3,8 @@ from django.http import Http404, HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 import backend
+import CASClient
+import re
 
 from .forms import NameForm
 from assigncal.models import DJStudent, DJCourse, Student, Course
@@ -24,6 +26,23 @@ def save(request):
     if (request.method == 'POST'):
         backend.add_to_db({"name" : "lol", "payload": request.POST.dict()})
         return render(request, 'assigncal/cal.html')
+
+def login(request):
+    C = CASClient.CASClient()
+    login_url = C.Authenticate()
+    return HttpResponseRedirect(login_url)
+
+def gotoBB(request):
+    requrl = request.get_full_path()
+    ticket = re.split("ticket=",requrl)[1]
+    #ticket = re.split("-auth-a", ticket)[0]
+    #print ("ticket is : " + ticket)
+    C = CASClient.CASClient()
+    netid = C.Validate(ticket)
+    #print netid
+    #return HttpResponseRedirect("https://blackboard.princeton.edu/webapps/portal/execute/tabs/tabAction?tab_tab_group_id=_121_1")
+    context = {'title' : "DjangoAlex", 'netid' : netid}
+    return render(request, 'assigncal/cal.html', context)
 
 '''
 def item_detail(request, id):
