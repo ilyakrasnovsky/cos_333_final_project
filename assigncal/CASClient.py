@@ -3,9 +3,6 @@ class CASClient:
    def __init__(self, service_url):
       self.cas_url = 'https://authenticate.princeton.edu/cas/'
       self.service_url = service_url + "gotoBB"
-      #self.cas_url = 'https://fed.princeton.edu/cas/'
-      #self.service_url = 'http://localhost:8000/gotoBB'
-      #self.service_url = 'http://assign-cals-cos333.herokuapp.com/gotoBB'
    def Authenticate(self):
       login_url = self.cas_url + 'login' \
          + '?service=' + urllib.quote(self.service_url)

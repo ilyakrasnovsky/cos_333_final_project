@@ -37,11 +37,11 @@ class Student:
         self.netid = netid
         self.freelist = freelist
 
-    def _djangofy(self):
+    def djangofy(self):
         return  DJStudent(netid=self.netid,\
                  freelist=json.dumps(self.freelist))
 
-    def _dictify(self):
+    def dictify(self):
         return  {
                     "netid": self.netid,\
                     "freelist" : self.freelist\

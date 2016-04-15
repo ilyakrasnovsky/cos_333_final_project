@@ -9,7 +9,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 #DEPLOYMENT MODE : toggle LOCAL or REMOTE
-DEPLOY = 'REMOTE'
+DEPLOY = 'LOCAL'
 
 #Secret keys for heroku and firebase (deploy must be LOCAL or REMOTE)
 def SECRET_KEYS(deploy):
@@ -21,9 +21,6 @@ def SECRET_KEYS(deploy):
         print ('BAD DEPLOMENT CONDITION!')
         assert(False)
 
-#Toggle 'LOCAL' if you're developing locally via $ heroku local
-#Be sure to run localcreds.py in the project directory before
-#developing locally! (instructions in localcreds.py source code) 
 (SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS(DEPLOY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
