@@ -5,6 +5,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 import backend
 import CASClient
 import re
+import mechanize
 
 from .forms import NameForm
 from assigncal.models import DJStudent, DJCourse, Student, Course
@@ -35,15 +36,16 @@ def login(request):
 def gotoBB(request):
     requrl = request.get_full_path()
     ticket = re.split("ticket=",requrl)[1]
-    #ticket = re.split("-auth-a", ticket)[0]
     #print ("ticket is : " + ticket)
     C = CASClient.CASClient()
     netid = C.Validate(ticket)
-    #print netid
-    #return HttpResponseRedirect("https://blackboard.princeton.edu/webapps/portal/execute/tabs/tabAction?tab_tab_group_id=_121_1")
-    context = {'title' : "DjangoAlex", 'netid' : netid}
-    return render(request, 'assigncal/cal.html', context)
-
+    #print ("Netid : " + netid)
+    br = mechanize.Browser()
+    br.open("https://blackboard.princeton.edu/")
+    BBhtml = br.response().read()
+    #print (BBhtml)
+    return HttpResponseRedirect("https://blackboard.princeton.edu/")
+    
 '''
 def item_detail(request, id):
     try:

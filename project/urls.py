@@ -9,7 +9,7 @@ urlpatterns = [
     #r means re
     #cascades down in order
     #extra params are passed 
-    url(r'^$', views.login, name='login'),
+    url(r'^$', views.cal, name='cal'),
     url(r'^save', views.save, name='save'),
     url(r'^login', views.login, name='login'),
     url(r'^gotoBB', views.gotoBB, name='gotoBB'),
