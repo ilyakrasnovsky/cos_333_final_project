@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.conf import settings
 
 import backend
 import CASClient
@@ -9,6 +10,8 @@ import mechanize
 
 from .forms import NameForm
 from assigncal.models import DJStudent, DJCourse, Student, Course
+
+SITE_URL = settings.SITE_URL
 
 @ensure_csrf_cookie
 def cal(request):
@@ -29,7 +32,7 @@ def save(request):
         return render(request, 'assigncal/cal.html')
 
 def login(request):
-    C = CASClient.CASClient()
+    C = CASClient.CASClient(SITE_URL)
     login_url = C.Authenticate()
     return HttpResponseRedirect(login_url)
 
@@ -37,7 +40,7 @@ def gotoBB(request):
     requrl = request.get_full_path()
     ticket = re.split("ticket=",requrl)[1]
     #print ("ticket is : " + ticket)
-    C = CASClient.CASClient()
+    C = CASClient.CASClient(SITE_URL)
     netid = C.Validate(ticket)
     #print ("Netid : " + netid)
     br = mechanize.Browser()
