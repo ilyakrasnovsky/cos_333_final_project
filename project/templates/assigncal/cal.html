@@ -8,8 +8,14 @@
 <script src='../../static/moment.min.js'></script>
 <script src='../../static/jquery.min.js'></script>
 <script src='../../static/fullcalendar.min.js'></script>
+<<<<<<< HEAD
 <script>
 
+=======
+<script src='../../static/csrfcookie.js'></script>
+<script>
+	var mytitle = "{{title|escapejs|safe}}";
+>>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
 			theme: true,
@@ -23,9 +29,14 @@
 			selectable: true,
 			selectHelper: true,
 			select: function(start, end, jsEvent, view) {
+<<<<<<< HEAD
     			//alert("The view's name is " + view.name);
 				//alert("start is " + start.stripTime().format());
 				//alert("end is " + end.stripTime().format());
+=======
+    			var starttime = start.format();
+				$.post('/save', {'starttime': starttime})
+>>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
 				if (view.name == 'month')
 				{
 					$('#calendar').fullCalendar('gotoDate',start);
@@ -42,8 +53,13 @@
 					};
 					$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
 				}
+<<<<<<< HEAD
 				$('#calendar').fullCalendar('unselect');
 				*/
+=======
+				*/
+				$('#calendar').fullCalendar('unselect');
+>>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
 			},
 			
 			eventMouseover: function( event, jsEvent, view ) 
@@ -105,7 +121,11 @@
 					id : 0
 				},
 				{
+<<<<<<< HEAD
 					title: 'Alex',
+=======
+					title: mytitle,
+>>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
 					start: '2016-01-12',
 					textColor : "white",
 					color : 'black'

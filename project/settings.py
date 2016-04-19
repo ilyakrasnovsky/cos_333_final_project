@@ -4,11 +4,20 @@ Django Settings File
 import os
 import localcreds
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
+<<<<<<< HEAD
+=======
+#DEPLOYMENT MODE : toggle LOCAL or REMOTE
+DEPLOY = 'REMOTE'
+
+>>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
 #Secret keys for heroku and firebase (deploy must be LOCAL or REMOTE)
 def SECRET_KEYS(deploy):
     if (deploy == 'LOCAL'):
@@ -19,6 +28,7 @@ def SECRET_KEYS(deploy):
         print ('BAD DEPLOMENT CONDITION!')
         assert(False)
 
+<<<<<<< HEAD
 #Toggle 'LOCAL' if you're developing locally via $ heroku local
 #Be sure to run localcreds.py in the project directory before
 #developing locally! (instructions in localcreds.py source code) 
@@ -26,6 +36,15 @@ def SECRET_KEYS(deploy):
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+=======
+(SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS(DEPLOY)
+
+# SECURITY WARNING: don't run with debug turned on in production!
+if (DEPLOY == 'LOCAL'):
+    DEBUG = True
+else:
+    DEBUG = False
+>>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
 
 # Application definition
 INSTALLED_APPS = (
@@ -36,7 +55,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'assigncal',
+<<<<<<< HEAD
      'cas'
+=======
+>>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
 )
 
 MIDDLEWARE_CLASSES = (
@@ -48,8 +70,11 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+<<<<<<< HEAD
     'cas.middleware.CASMiddleware',
     'django.contrib.auth.middleware.RemoteUserMiddleware',
+=======
+>>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
 )
 
 ROOT_URLCONF = 'project.urls'
@@ -98,6 +123,7 @@ AUTH_PASSWORD_VALIDATORS = (
     },
 )
 
+<<<<<<< HEAD
 #CAS_SERVER_URL
 CAS_SERVER_URL = "https://fed.princeton.edu/cas/login"
 CAS_LOGOUT_COMPLETELY = True
@@ -118,6 +144,25 @@ FIREBASE_URLS = {
 
 SITE_URL = SITE_URLS['DEV'] 
 FIREBASE_URL = FIREBASE_URLS['DEV']
+=======
+#where our site is on the web
+SITE_URLS = { 
+'LOCAL': 'http://localhost:8000/',
+'REMOTE': 'http://assign-cals-cos333.herokuapp.com/', 
+'LIVE': 'NEED A LEGIT NAME' 
+} 
+
+SITE_URL = SITE_URLS[DEPLOY] 
+
+#where our firebase is on the web
+FIREBASE_URLS = { 
+'LOCAL' : 'https://assign-cals-cos333.firebaseio.com/',
+'REMOTE': 'https://assign-cals-cos333.firebaseio.com/', 
+'LIVE': 'NEED A LEGIT NAME' 
+} 
+
+FIREBASE_URL = FIREBASE_URLS[DEPLOY]
+>>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
