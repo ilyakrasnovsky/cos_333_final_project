@@ -11,7 +11,6 @@
 <script src='../../static/fullcalendar.min.js'></script>
 <script src='../../static/csrfcookie.js'></script>
 <script>
-	var mytitle = "{{title|escapejs|safe}}";
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
 			theme: true,
@@ -25,18 +24,21 @@
 			selectable: true,
 			selectHelper: true,
 			select: function(start, end, jsEvent, view) {
-    			var starttime = start.format();
-				//$.post('/save', {'starttime': starttime});
-				$.ajax({
-			  		url: '/save',
-			  		method: 'POST',
-			  		data : {'starttime': starttime}, 
-				});
-				
 				if (view.name == 'month')
 				{
 					$('#calendar').fullCalendar('gotoDate',start);
 					$('#calendar').fullCalendar('changeView','agendaDay');	
+				}
+				else
+				{
+					var starttime = start.format();
+					var endtime = end.format();
+					$.ajax({
+				  		url: '/save',
+				  		method: 'POST',
+				  		data : {'starttime': starttime,
+				  				'endtime' : endtime}, 
+					});
 				}
 				/*
 				var title = prompt('Event Title:');
@@ -94,12 +96,10 @@
 		        	eventLimit: false
 		        }
     		},
-			//eventColor : 'green',//'#f58400',
 			eventTextColor : 'black',
-			//events : eventlist
 			events : function (start, end, timezone, callback) {
 				$.ajax({
-				  	url: '/myfeed',
+				  	url: '/eventfeed',
 				  	method: 'GET',
 				}).done(function(data){
 				  	callback(data.events);

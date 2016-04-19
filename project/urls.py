@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^save', views.save, name='save'),
     url(r'^login', views.login, name='login'),
     url(r'^gotoBB', views.gotoBB, name='gotoBB'),
-    url(r'^myfeed', views.myfeed, name='myfeed'),
+    url(r'^eventfeed', views.eventfeed, name='eventfeed'),
     #<> --> named group
     #url(r'^item/(?P<id>\d+)/', views.item_detail, name = 'item_detail'),
     #url(r'^entry/', views.entry, name = 'entry'),

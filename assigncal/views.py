@@ -22,17 +22,105 @@ def cal(request):
     #backend.add_to_db({'name' : 'string', 'payload' : 'stuff'})
     #context = {'items' : backend.get_from_db('string')}
     #path starts at project/templates/
-    context = {"title" : "DjangoAlex"}
-    return render(request, 'assigncal/cal.html', context)
+    return render(request, 'assigncal/cal.html')
 
+#Get the next date as a (year, month, day) tuple
+#given the current date as the same tuple
+def nextDate(year, month, day):
+    if (month in [1,3,5,7,8,10,12]):
+        if (day == 31):
+            if (month == 12):
+                return (year + 1, 1, 1)
+            else:
+                return (year, month + 1, 1)
+        else:
+            return (year, month, day + 1)
+    elif (month in [4,6,9,11]):
+        if (day == 30):
+            return (year, month + 1, 1)
+        else:
+            return (year, month, day + 1)
+    else:
+        if (year % 4 == 0):
+            if (day == 29):
+                return (year, month + 1, 1)
+            else:
+                return (year, month, day + 1)
+        else:
+            if (day == 28):
+                return (year, month + 1, 1)
+            else:
+                return (year, month, day + 1)
+
+#Get the next 30 minute block as a (year, month, day, hour, minute) tuples
+#from the current block as the same tuple
+def nextClock(year, month, day, hour, minute):
+    if (minute == 30):
+        if (hour == 23):
+            (year, month, day) = nextDate(year, month, day)
+            return (year, month, day, 0, 0)
+        else:
+            return (year, month, day, hour + 1, 0)
+    else:
+        return (year, month, day, hour, 30)
+
+#Generate free list from start
+#time and end time, i.e., break
+#it into 30 minutes blocks 
+def makeFreeList(starttime, endtime):
+    (startdate, startclock) = (starttime.split('T')[0],
+                               starttime.split('T')[1]) 
+    (enddate, endclock) = (endtime.split('T')[0],
+                               endtime.split('T')[1]) 
+    timelist = []
+    if (starttime != endtime):
+        (year, month, day) = (int(startdate.split('-')[0]),
+                             int(startdate.split('-')[1]),
+                             int(startdate.split('-')[2]))
+        (YYYYe, MMe, DDe) = (int(enddate.split('-')[0]),
+                             int(enddate.split('-')[1]),
+                             int(enddate.split('-')[2]))
+        (hour, minute) = (int(startclock.split(':')[0]),
+                          int(startclock.split(':')[1]))
+        (HHe, mme) = (int(endclock.split(':')[0]),
+                          int(endclock.split(':')[1]))
+        while (year < YYYYe):
+            timelist.append("%04d-%02d-%02dT%02d:%02d:00" %
+                            (year, month, day, hour, minute))
+            (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
+        while (month < MMe):
+            timelist.append("%04d-%02d-%02dT%02d:%02d:00" %
+                            (year, month, day, hour, minute))
+            (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
+        while (day < DDe):
+            timelist.append("%04d-%02d-%02dT%02d:%02d:00" %
+                            (year, month, day, hour, minute))
+            (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
+        while (hour < HHe):
+            timelist.append("%04d-%02d-%02dT%02d:%02d:00" %
+                            (year, month, day, hour, minute))
+            (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
+        while (minute < mme):
+            timelist.append("%04d-%02d-%02dT%02d:%02d:00" %
+                            (year, month, day, hour, minute))
+            (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
+        timelist.append(endtime)
+    return timelist
+
+#save free time blocks to users freelist
 @ensure_csrf_cookie
 def save(request):
     if (request.method == 'POST'):
-        print (request.POST.dict())
-        #backend.add_to_db({"name" : "lol", "payload": request.POST.dict()})
+        Sdict = {"freelist" : makeFreeList(request.POST.dict()['starttime'],
+                              request.POST.dict()['endtime'])
+                }
+        backend.updateStudent(request.session.get('netid'), Sdict)
+        #print ("printing netid from /save as " + request.session.get('netid'))
         return render(request, 'assigncal/cal.html')
 
-def myfeed(request):
+#remove free time blocks 
+
+def eventfeed(request):
     context = {'events' : [
                         {
                             "title": '4 people',
@@ -273,7 +361,10 @@ def gotoBB(request):
     #Validate ticket, get netid from it
     C = CASClient.CASClient(SITE_URL)
     netid = C.Validate(ticket)
-    
+
+    #Save netid to session for use in other views
+    request.session['netid'] = netid
+
     #Make Student object out of netid    
     Sobject = Student(netid)
     
@@ -297,8 +388,8 @@ def gotoBB(request):
     br.open("https://blackboard.princeton.edu/")
     BBhtml = br.response().read()
     #print (BBhtml)
-    
-    return HttpResponseRedirect("https://blackboard.princeton.edu/")
+    return render(request, 'assigncal/cal.html')    
+    #return HttpResponseRedirect("https://blackboard.princeton.edu/")
     
 '''
 def item_detail(request, id):

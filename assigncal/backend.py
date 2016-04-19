@@ -43,7 +43,7 @@ def getStudent(netid=None):
 #Updates the entry on the student with netid with the information
 #contained in Sdict. Returns True if successful, False if netid
 #not in database, and ERROR if connection issue
-def updateStudent(netid, Sdict):
+def addTimesToStudent(netid, Sdict):
     isPresent = getStudent(netid)
     if (isPresent != None):
         try:
@@ -55,7 +55,24 @@ def updateStudent(netid, Sdict):
         return "ERROR"
     else:
         return False
-    
+
+#Updates the entry on the student with netid with the information
+#contained in Sdict. Returns True if successful, False if netid
+#not in database, and ERROR if connection issue
+def removeTimesFromStudent(netid, Sdict):
+    isPresent = getStudent(netid)
+    if (isPresent != None):
+        try:
+            for i in Sdict['freelist']:
+                fdb.delete('/students/' + netid, i)
+            return True
+        except HTTPError:
+            return "ERROR"
+    elif (isPresent == "ERROR"):
+        return "ERROR"
+    else:
+        return False
+  
 def addCourse(Cdict):
     isPresent = getCourse(Cdict['name'])
     if (isPresent == None):
@@ -169,14 +186,14 @@ def main():
     status = getCourse("MAE 426")
     print (status)
 
-    print ("TESTING updateStudent")
+    print ("TESTING addTimesToStudent")
     ilya_updates = {"freelist" : ['2016-01-25T134:00:00', '2016-01-25T134:00:00']}
-    status = updateStudent("ilyak", ilya_updates)
+    status = addTimesToStudent("ilyak", ilya_updates)
     print (status)
     andrea_updates = {"freelist" : ['2016-01-25T134:00:00', '2016-01-25T134:00:00']}
-    status = updateStudent("amalleo", andrea_updates)
+    status = addTimesToStudent("amalleo", andrea_updates)
     print (status)
-    status = updateStudent("asdf", andrea_updates)
+    status = addTimesToStudent("asdf", andrea_updates)
     print (status)
 
     print ("TESTING updateCourse")
