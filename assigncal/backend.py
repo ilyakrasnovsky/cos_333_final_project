@@ -47,7 +47,7 @@ def addTimesToStudent(netid, Sdict):
     isPresent = getStudent(netid)
     if (isPresent != None):
         try:
-            fdb.patch('/students/' + netid, Sdict)
+            fdb.patch('/students/' + netid + "/freedict/", Sdict['freedict'])
             return True
         except HTTPError:
             return "ERROR"
@@ -59,12 +59,13 @@ def addTimesToStudent(netid, Sdict):
 #Updates the entry on the student with netid with the information
 #contained in Sdict. Returns True if successful, False if netid
 #not in database, and ERROR if connection issue
-def removeTimesFromStudent(netid, Sdict):
+def forceUpdateStudent(netid, Sdict):
     isPresent = getStudent(netid)
     if (isPresent != None):
         try:
-            for i in Sdict['freelist']:
-                fdb.delete('/students/' + netid, i)
+            #for i in Sdict['freelist'].keys():
+            #    fdb.delete('/students/' + netid + "/freelist/", i)
+            fdb.patch('/students/' + netid, Sdict)
             return True
         except HTTPError:
             return "ERROR"

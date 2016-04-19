@@ -72,7 +72,7 @@ def makeFreeList(starttime, endtime):
                                starttime.split('T')[1]) 
     (enddate, endclock) = (endtime.split('T')[0],
                                endtime.split('T')[1]) 
-    timelist = []
+    timedict = dict()
     if (starttime != endtime):
         (year, month, day) = (int(startdate.split('-')[0]),
                              int(startdate.split('-')[1]),
@@ -85,40 +85,54 @@ def makeFreeList(starttime, endtime):
         (HHe, mme) = (int(endclock.split(':')[0]),
                           int(endclock.split(':')[1]))
         while (year < YYYYe):
-            timelist.append("%04d-%02d-%02dT%02d:%02d:00" %
-                            (year, month, day, hour, minute))
+            time = "%04d-%02d-%02dT%02d:%02d:00" % \
+                    (year, month, day, hour, minute)
+            timedict[time] = ""
             (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
         while (month < MMe):
-            timelist.append("%04d-%02d-%02dT%02d:%02d:00" %
-                            (year, month, day, hour, minute))
+            time ="%04d-%02d-%02dT%02d:%02d:00" % \
+                    (year, month, day, hour, minute)
+            timedict[time] = ""
             (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
         while (day < DDe):
-            timelist.append("%04d-%02d-%02dT%02d:%02d:00" %
-                            (year, month, day, hour, minute))
+            time ="%04d-%02d-%02dT%02d:%02d:00" % \
+                    (year, month, day, hour, minute)
+            timedict[time] = ""
             (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
         while (hour < HHe):
-            timelist.append("%04d-%02d-%02dT%02d:%02d:00" %
-                            (year, month, day, hour, minute))
+            time ="%04d-%02d-%02dT%02d:%02d:00" % \
+                    (year, month, day, hour, minute)
+            timedict[time] = ""
             (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
         while (minute < mme):
-            timelist.append("%04d-%02d-%02dT%02d:%02d:00" %
-                            (year, month, day, hour, minute))
+            time ="%04d-%02d-%02dT%02d:%02d:00" % \
+                    (year, month, day, hour, minute)
+            timedict[time] = ""
             (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
-        timelist.append(endtime)
-    return timelist
+        timedict[endtime] = ""
+    return timedict
 
 #save free time blocks to users freelist
 @ensure_csrf_cookie
 def save(request):
     if (request.method == 'POST'):
-        Sdict = {"freelist" : makeFreeList(request.POST.dict()['starttime'],
+        Sdict = {"freedict" : makeFreeList(request.POST.dict()['starttime'],
                               request.POST.dict()['endtime'])
                 }
-        backend.updateStudent(request.session.get('netid'), Sdict)
-        #print ("printing netid from /save as " + request.session.get('netid'))
+        backend.addTimesToStudent(request.session.get('netid'), Sdict)
         return render(request, 'assigncal/cal.html')
 
-#remove free time blocks 
+#remove free time blocks from users freelist
+@ensure_csrf_cookie
+def remove(request):
+    if (request.method == 'POST'):
+        Sdict = backend.getStudent(request.session.get('netid'))['freedict']
+        toRemove = makeFreeList(request.POST.dict()['starttime'],
+                              request.POST.dict()['endtime'])
+        for i in toRemove.keys():
+            Sdict.pop(i, None)
+        backend.forceUpdateStudent(request.session.get('netid'), {"freedict" : Sdict})
+        return render(request, 'assigncal/cal.html')
 
 def eventfeed(request):
     context = {'events' : [

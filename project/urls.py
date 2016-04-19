@@ -11,6 +11,7 @@ urlpatterns = [
     #extra params are passed 
     url(r'^$', views.cal, name='cal'),
     url(r'^save', views.save, name='save'),
+    url(r'^remove', views.remove, name='remove'),
     url(r'^login', views.login, name='login'),
     url(r'^gotoBB', views.gotoBB, name='gotoBB'),
     url(r'^eventfeed', views.eventfeed, name='eventfeed'),
