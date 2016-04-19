@@ -5,7 +5,7 @@ import os
 import sys
 #sys.path.append("/cygdrive/c/Users/masel_000/Desktop/COS333/Application/Application/project")
 
-#import localcreds
+import localcreds
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
