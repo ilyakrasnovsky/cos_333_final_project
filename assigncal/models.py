@@ -21,10 +21,10 @@ initializer input:
     freelist (optional)
 
 functions:
-    _djangofy : private method that returns a DJStudent()
+    djangofy : method that returns a DJStudent()
                 instance, which is the same data structure
                 but inherits from django.models
-    _dictify : private method that returns a dictionary
+    dictify : method that returns a dictionary
                 representation of this instance (for json
                     conversion into firebase)
 '''
@@ -64,10 +64,10 @@ initializer input:
     duedates (optional)
 
 functions:
-    _djangofy : private method that returns a DJCourse()
+    djangofy : method that returns a DJCourse()
                 instance, which is the same data structure
                 but inherits from django.models
-    _dictify : private method that returns a dictionary
+    dictify : method that returns a dictionary
             representation of this instance (for json
                 conversion into firebase)
 '''

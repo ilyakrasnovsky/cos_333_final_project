@@ -51,6 +51,7 @@ def gotoBB(request):
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
     
+    '''
     #Make DJStudent (Django model) object out of netid
     DJSobject = Sobject.djangofy()
     
@@ -60,6 +61,7 @@ def gotoBB(request):
     except DJStudent.DoesNotExist, DJStudent.MultipleObjectsReturned:
         DJSobject.save()
     #print (DJStudent.objects.get(netid=netid).netid)
+    '''
     
     #Automated scraping and browsing of blackboard called here
     br = mechanize.Browser()
