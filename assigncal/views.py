@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.conf import settings
+from django.http import JsonResponse
 
 import backend
 import CASClient
@@ -21,8 +22,18 @@ def cal(request):
     #backend.add_to_db({'name' : 'string', 'payload' : 'stuff'})
     #context = {'items' : backend.get_from_db('string')}
     #path starts at project/templates/
-    context = {'title' : "DjangoAlex",
-                'events' : [
+    context = {"title" : "DjangoAlex"}
+    return render(request, 'assigncal/cal.html', context)
+
+@ensure_csrf_cookie
+def save(request):
+    if (request.method == 'POST'):
+        print (request.POST.dict())
+        #backend.add_to_db({"name" : "lol", "payload": request.POST.dict()})
+        return render(request, 'assigncal/cal.html')
+
+def myfeed(request):
+    context = {'events' : [
                         {
                             "title": '4 people',
                             "rendering": 'background',
@@ -246,13 +257,7 @@ def cal(request):
                         }
                 ]
         }
-    return render(request, 'assigncal/cal.html', context)
-
-@ensure_csrf_cookie
-def save(request):
-    if (request.method == 'POST'):
-        #backend.add_to_db({"name" : "lol", "payload": request.POST.dict()})
-        return render(request, 'assigncal/cal.html')
+    return JsonResponse(context)
 
 def login(request):
     #Redirect to CAS login, will append ticket in response

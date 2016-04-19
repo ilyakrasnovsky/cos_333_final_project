@@ -12,34 +12,6 @@
 <script src='../../static/csrfcookie.js'></script>
 <script>
 	var mytitle = "{{title|escapejs|safe}}";
-	var eventlist = [];
-	{% for i in events %}
-		eventlist.push(
-			{ 
-			  {% if i.title %}
-			  	title : "{{ i.title }}",
-			  {% endif %}
-			  {% if i.start %}
-			  	start : "{{ i.start }}",
-			  {% endif %}
-			  {% if i.color %}
-			  	color : "{{ i.color }}",
-			  {% endif %}
-			  {% if i.end %}
-			  	end : "{{ i.end }}",
-			  {% endif %}
-			  {% if i.textColor %}
-			  	textColor : "{{ i.textColor }}",
-			  {% endif %}
-			  {% if i.id %}
-			  	id : {{ i.id }},
-			  {% endif %}
-			  {% if i.rendering %}
-			  	rendering : "{{ i.rendering }}"
-			  {% endif %}
-			}
-		);
-	{% endfor %}
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
 			theme: true,
@@ -54,7 +26,13 @@
 			selectHelper: true,
 			select: function(start, end, jsEvent, view) {
     			var starttime = start.format();
-				$.post('/save', {'starttime': starttime})
+				//$.post('/save', {'starttime': starttime});
+				$.ajax({
+			  		url: '/save',
+			  		method: 'POST',
+			  		data : {'starttime': starttime}, 
+				});
+				
 				if (view.name == 'month')
 				{
 					$('#calendar').fullCalendar('gotoDate',start);
@@ -77,10 +55,8 @@
 			
 			eventMouseover: function( event, jsEvent, view ) 
 			{ 
-				
 				if (view.name == 'month')
 				{
-					//alert('hi')
 					$('#calendar').fullCalendar('eventLimitClick', 'popover');
 				}
 			},
@@ -120,10 +96,16 @@
     		},
 			//eventColor : 'green',//'#f58400',
 			eventTextColor : 'black',
-			events : eventlist
-			//events : {{ events }}
-		});
-		
+			//events : eventlist
+			events : function (start, end, timezone, callback) {
+				$.ajax({
+				  	url: '/myfeed',
+				  	method: 'GET',
+				}).done(function(data){
+				  	callback(data.events);
+				});
+			}
+		});		
 	});
 
 </script>
@@ -135,8 +117,8 @@
 			<li class="class_list"><a href="google.com">COS 333</a></li>
 			<li class="class_list"><a href="google.com">MAE 342</a></li>
 			<li class="class_list"><a href="google.com">MAE 426</a></li>
-			<li class="class_list"><a href="google.com">MAE-IW</a></li>
-			<li class="class_list"><a href="google.com">My Frees</a></li>
+			<li class="class_list"><a href="google.com">CLA 255</a></li>
+			<li class="class_list"><a href="google.com">COS 217</a></li>
 			<li class="class_list"><a href="google.com">My Frees</a></li>
 		</ul>
 	</div>
