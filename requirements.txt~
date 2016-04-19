@@ -1,11 +1,17 @@
 Django==1.9.2
 argparse==1.2.1
 gunicorn==19.4.5
+<<<<<<< HEAD
+=======
 mechanize==0.2.5
+>>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
 psycopg2==2.6.1
 python-firebase==1.2
 requests==2.9.1
 whitenoise==2.0.6
 wsgiref==0.1.2
+<<<<<<< HEAD
 django-cas-client==1.2.0
 factory-boy==2.4.1
+=======
+>>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e

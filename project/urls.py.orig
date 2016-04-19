@@ -9,17 +9,11 @@ urlpatterns = [
     #r means re
     #cascades down in order
     #extra params are passed 
-<<<<<<< HEAD
-   # url(r'^$', views.cal, name='cal'),
-    url(r'^$', 'cas.views.login', name='login'),
-    url(r'^login/$', 'cas.views.login', name='login'),
-    url(r'^logout/$', 'cas.views.logout', name='logout'),
-=======
+   # url(r'^$', views.cal, name='cal')
     url(r'^$', views.cal, name='cal'),
     url(r'^save', views.save, name='save'),
     url(r'^login', views.login, name='login'),
-    url(r'^gotoBB', views.gotoBB, name='gotoBB'),
->>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
+    url(r'^gotoBB', views.gotoBB, name='gotoBB')
     #<> --> named group
     #url(r'^item/(?P<id>\d+)/', views.item_detail, name = 'item_detail'),
     #url(r'^entry/', views.entry, name = 'entry'),
