@@ -111,18 +111,6 @@ def updateCourse(name, Cdict):
     else:
         return False
     
-'''
-#Delete information from the database by
-#name. url indicates which branch of the database to search
-#Returns true, or "ERROR" if connection issue
-def delete(url, name):
-    try:
-        fdb.delete(url, name)
-        return True
-    except HTTPError:
-        return "ERROR"
-'''
-
 #Tester client
 def main():
     '''UNPROTECTED FIREBASE FOR RANDOM TESTING

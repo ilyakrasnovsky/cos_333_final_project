@@ -123,27 +123,29 @@
 </script>
 
 <script type="text/javascript">
-	{% for key,value in courses.items %}
 	window.onload = function() {
-		var {{ value }} = document.getElementById("{{ value }}");
-		{{ value }}.onclick = function() {
-			$.ajax({
-			  	url: '/courses',
-			  	method: 'POST',
-			  	data: {'course' : "{{ value }}"}
-			});
-			return false;
-			}
-	}
-	{% endfor %}
-	window.onload = function() {
-	var myFrees = document.getElementById("myFrees");
-		{{ course }}.onclick = function() {
+		{% for key,value in courses.items %}
+			var {{ value }} = document.getElementById("{{ value }}");
+			{{ value }}.onclick = function() {
+				$.ajax({
+				  	url: '/courses',
+				  	method: 'POST',
+				  	data: {'course' : "{{ value }}"}
+				});
+				$('#calendar').fullCalendar('refetchEvents');
+				$('#calendar').fullCalendar('changeView','month');
+				return false;
+				}
+		{% endfor %}
+		var myFrees = document.getElementById("myFrees");
+		myFrees.onclick = function() {
 			$.ajax({
 			  	url: '/courses',
 			  	method: 'POST',
 			  	data: {'course' : "myFrees"}
 			});
+			$('#calendar').fullCalendar('refetchEvents');
+			$('#calendar').fullCalendar('changeView','month');	
 			return false;
 			}
 	}

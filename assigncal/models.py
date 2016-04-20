@@ -21,7 +21,7 @@ initializer input:
     freelist (optional)
 
 functions:
-    djangofy : method that returns a DJStudent()
+    DEPRECATED djangofy : method that returns a DJStudent()
                 instance, which is the same data structure
                 but inherits from django.models
     dictify : method that returns a dictionary
@@ -64,7 +64,7 @@ initializer input:
     duedates (optional)
 
 functions:
-    djangofy : method that returns a DJCourse()
+    DEPRECATED djangofy : method that returns a DJCourse()
                 instance, which is the same data structure
                 but inherits from django.models
     dictify : method that returns a dictionary
