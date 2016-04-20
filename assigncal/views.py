@@ -21,6 +21,9 @@ from assigncal.models import Student, Course
 
 @ensure_csrf_cookie
 def cal(request):
+    if (request.session.get('netid') == None):
+        raise Http404('')
+    print (request.session.get('netid'))
     context = {"courses" : request.session.get('courses')}
     return render(request, 'assigncal/cal.html', context)
 
@@ -150,23 +153,52 @@ def makeEvents(netid):
     Sdict = backend.getStudent(netid)
     if (Sdict.has_key('freedict')):
         freedict = Sdict['freedict']
-        prevdate = None
+        useddates = []
         for free in freedict.keys():
-            date = free.split('T')[0]
-            if (date != prevdate):
+            (date, clock) = (free.split('T')[0],
+                            free.split('T')[1])
+            (year, month, day) = (int(date.split('-')[0]),
+                             int(date.split('-')[1]),
+                             int(date.split('-')[2]))
+            (hour, minute) = (int(clock.split(':')[0]),
+                              int(clock.split(':')[1]))                
+            (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
+            nextfree = "%04d-%02d-%02dT%02d:%02d:00" % \
+                    (year, month, day, hour, minute)
+            print (free)
+            print (nextfree)
+            print
+            if (date not in useddates):
                 events.append({
-                        "title" : netid,
+                        "title" : netid + " is free!",
+                        "start" : date,
+                        "color" : "white",
+                    })
+                events.append({
+                        "title" : netid + " is free!",
                         "start" : date,
                         "color" : "white",
                         "rendering" : "background"
                     })
-                prevdate = date
+                useddates.append(date)
             events.append({
                     "title" : netid,
                     "start" : free,
+                    "end" : nextfree,
                     "color" : "white",
                     "rendering" : "background"
                 })
+    '''
+    prevstart = events[0]['start']
+    for i in range(0, len(events)):
+        if (i >= 1):
+            if (events[i]['start'] == events[i-1]['start']):
+                print ("same time found")
+                pass
+            else:
+                print (events[i]['start'])
+                pass
+    '''
     return events
 
 #adds current course selection from tab as a session variable,

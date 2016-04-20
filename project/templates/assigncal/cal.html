@@ -23,38 +23,7 @@
 			defaultView: 'month',
 			selectable: true,
 			selectHelper: true,
-			select: function(start, end, jsEvent, view) {
-				if (view.name == 'month')
-				{
-					$('#calendar').fullCalendar('gotoDate',start);
-					$('#calendar').fullCalendar('changeView','agendaDay');	
-				}
-				else
-				{
-					var starttime = start.format();
-					var endtime = end.format();
-					$.ajax({
-				  		url: '/save',
-				  		method: 'POST',
-				  		data : {'starttime': starttime,
-				  				'endtime' : endtime}, 
-					});
-				}
-				/*
-				var title = prompt('Event Title:');
-				var eventData;
-				if (title) {
-					eventData = {
-						title: title,
-						start: start,
-						end: end
-					};
-					$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-				}
-				*/
-				$('#calendar').fullCalendar('unselect');
-			},
-			
+			nowIndicator : true,			
 			eventMouseover: function( event, jsEvent, view ) 
 			{ 
 				if (view.name == 'month')
@@ -104,22 +73,49 @@
 				}).done(function(data){
 				  	callback(data.events);
 				});
+			},
+			
+			/*
+			events : [
+				"title" : "todayreplace",
+				"start" : $('#calendar').fullCalendar('getDate');
+			],
+			*/
+			select: function(start, end, jsEvent, view) {
+				if (view.name == 'month')
+				{
+					$('#calendar').fullCalendar('gotoDate',start);
+					$('#calendar').fullCalendar('changeView','agendaDay');	
+				}
+				else
+				{
+					var starttime = start.format();
+					var endtime = end.format();
+					$.ajax({
+				  		url: '/save',
+				  		method: 'POST',
+				  		data : {'starttime': starttime,
+				  				'endtime' : endtime}, 
+					}).done(function(){
+				  		$('#calendar').fullCalendar('refetchEvents');
+					});
+				}
+				/*
+				var title = prompt('Event Title:');
+				var eventData;
+				if (title) {
+					eventData = {
+						title: title,
+						start: start,
+						end: end
+					};
+					$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+				}
+				*/
+				$('#calendar').fullCalendar('unselect');
 			}
 		});		
 	});
-	
-	/*$(function() {
-    $("My Frees").click(function(e) {
-    	e.preventDefault(); // if desired...
-		$.ajax({
-		  	url: '/myfrees',
-		  	method: 'POST',
-		  	data: {'course' : "My Frees"}
-		});
-		//$('#calendar').fullCalendar('refetchEvents');
-		//alert("done fetching events");
-    	});
-  	});*/
 </script>
 
 <script type="text/javascript">
@@ -131,9 +127,10 @@
 				  	url: '/courses',
 				  	method: 'POST',
 				  	data: {'course' : "{{ value }}"}
+				}).done(function(){
+					$('#calendar').fullCalendar('refetchEvents');
+					$('#calendar').fullCalendar('changeView','month');
 				});
-				$('#calendar').fullCalendar('refetchEvents');
-				$('#calendar').fullCalendar('changeView','month');
 				return false;
 				}
 		{% endfor %}
@@ -143,9 +140,10 @@
 			  	url: '/courses',
 			  	method: 'POST',
 			  	data: {'course' : "myFrees"}
+			}).done(function(){
+					$('#calendar').fullCalendar('refetchEvents');
+					$('#calendar').fullCalendar('changeView','month');
 			});
-			$('#calendar').fullCalendar('refetchEvents');
-			$('#calendar').fullCalendar('changeView','month');	
 			return false;
 			}
 	}
