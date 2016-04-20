@@ -63,8 +63,6 @@ def forceUpdateStudent(netid, Sdict):
     isPresent = getStudent(netid)
     if (isPresent != None):
         try:
-            #for i in Sdict['freelist'].keys():
-            #    fdb.delete('/students/' + netid + "/freelist/", i)
             fdb.patch('/students/' + netid, Sdict)
             return True
         except HTTPError:

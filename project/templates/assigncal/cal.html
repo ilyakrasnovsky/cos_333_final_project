@@ -107,20 +107,61 @@
 			}
 		});		
 	});
+	
+	/*$(function() {
+    $("My Frees").click(function(e) {
+    	e.preventDefault(); // if desired...
+		$.ajax({
+		  	url: '/myfrees',
+		  	method: 'POST',
+		  	data: {'course' : "My Frees"}
+		});
+		//$('#calendar').fullCalendar('refetchEvents');
+		//alert("done fetching events");
+    	});
+  	});*/
+</script>
 
+<script type="text/javascript">
+	{% for key,value in courses.items %}
+	window.onload = function() {
+		var {{ value }} = document.getElementById("{{ value }}");
+		{{ value }}.onclick = function() {
+			$.ajax({
+			  	url: '/courses',
+			  	method: 'POST',
+			  	data: {'course' : "{{ value }}"}
+			});
+			return false;
+			}
+	}
+	{% endfor %}
+	window.onload = function() {
+	var myFrees = document.getElementById("myFrees");
+		{{ course }}.onclick = function() {
+			$.ajax({
+			  	url: '/courses',
+			  	method: 'POST',
+			  	data: {'course' : "myFrees"}
+			});
+			return false;
+			}
+	}
 </script>
 </head>
 <body>
 	<div class="classes_section">
 		<div class="logo"></div>	
-		<ul class="class_list">
-			<li class="class_list"><a href="google.com">COS 333</a></li>
-			<li class="class_list"><a href="google.com">MAE 342</a></li>
-			<li class="class_list"><a href="google.com">MAE 426</a></li>
-			<li class="class_list"><a href="google.com">CLA 255</a></li>
-			<li class="class_list"><a href="google.com">COS 217</a></li>
-			<li class="class_list"><a href="google.com">My Frees</a></li>
-		</ul>
+			<ul class="class_list">
+				{% for key,value in courses.items %}
+					<li class="class_list">
+						<a id="{{ value }}" href="#">{{ key }}</a>
+					</li>
+				{% endfor %}
+				<li class="class_list">
+						<a id="myFrees" href="#">My Frees</a>
+				</li>
+			</ul>
 	</div>
 	<div id='calendar'></div>
 </body>

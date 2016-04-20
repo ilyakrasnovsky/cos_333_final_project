@@ -22,7 +22,8 @@ def cal(request):
     #backend.add_to_db({'name' : 'string', 'payload' : 'stuff'})
     #context = {'items' : backend.get_from_db('string')}
     #path starts at project/templates/
-    return render(request, 'assigncal/cal.html')
+    context = {"courses" : request.session.get('courses')}
+    return render(request, 'assigncal/cal.html', context)
 
 #Get the next date as a (year, month, day) tuple
 #given the current date as the same tuple
@@ -120,7 +121,8 @@ def save(request):
                               request.POST.dict()['endtime'])
                 }
         backend.addTimesToStudent(request.session.get('netid'), Sdict)
-        return render(request, 'assigncal/cal.html')
+        context = {"courses" : request.session.get('courses')}
+        return render(request, 'assigncal/cal.html', context)
 
 #remove free time blocks from users freelist
 @ensure_csrf_cookie
@@ -132,7 +134,21 @@ def remove(request):
         for i in toRemove.keys():
             Sdict.pop(i, None)
         backend.forceUpdateStudent(request.session.get('netid'), {"freedict" : Sdict})
-        return render(request, 'assigncal/cal.html')
+        context = {"courses" : request.session.get('courses')}
+        return render(request, 'assigncal/cal.html', context)
+
+#Makes a list of events from dict of starttimes and endtimes
+def makeEvents():
+    return None
+
+#remove free time blocks from users freelist
+@ensure_csrf_cookie
+def courses(request):
+    print ("IN COURSES VIEW")
+    print (request.POST.dict())
+    #request.session['course'] = request.POST.dict()['course']
+    context = {"courses" : request.session.get('courses')}
+    return render(request, 'assigncal/cal.html', context)
 
 def eventfeed(request):
     context = {'events' : [
@@ -402,7 +418,15 @@ def gotoBB(request):
     br.open("https://blackboard.princeton.edu/")
     BBhtml = br.response().read()
     #print (BBhtml)
-    return render(request, 'assigncal/cal.html')    
+    #After scraping
+    courses = { "MAE 342" : "MAE342",
+                "COS 333" : "COS333",
+                "MAE 426" : "MAE426",
+                "CLA 255" : "CLA255",
+                "COS 217" : "COS217"}
+    request.session['courses'] = courses
+    context = {'courses' : courses}
+    return render(request, 'assigncal/cal.html', context) 
     #return HttpResponseRedirect("https://blackboard.princeton.edu/")
     
 '''
