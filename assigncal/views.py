@@ -6,7 +6,7 @@ handles HTTP requets and renders views
 
 #Django based dependencies
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.conf import settings
 
@@ -17,7 +17,7 @@ import re
 import mechanize
 
 #Model data structures
-from assigncal.models import DJStudent, DJCourse, Student, Course
+from assigncal.models import Student, Course
 
 @ensure_csrf_cookie
 def cal(request):
@@ -120,41 +120,77 @@ def save(request):
                               request.POST.dict()['endtime'])
                 }
         backend.addTimesToStudent(request.session.get('netid'), Sdict)
-        context = {"courses" : request.session.get('courses')}
-        return render(request, 'assigncal/cal.html', context)
+        #context = {"courses" : request.session.get('courses')}
+        #return render(request, 'assigncal/cal.html', context)
+        return HttpResponse("OK")
+    else:
+        raise Http404('')
 
 #remove free time blocks from users freelist
 @ensure_csrf_cookie
 def remove(request):
     if (request.method == 'POST'):
-        Sdict = backend.getStudent(request.session.get('netid'))['freedict']
         toRemove = makeFreeList(request.POST.dict()['starttime'],
                               request.POST.dict()['endtime'])
-        for i in toRemove.keys():
-            Sdict.pop(i, None)
-        backend.forceUpdateStudent(request.session.get('netid'), {"freedict" : Sdict})
-        context = {"courses" : request.session.get('courses')}
-        return render(request, 'assigncal/cal.html', context)
+        Sdict = backend.getStudent(request.session.get('netid'))
+        if (Sdict.has_key('freedict')):
+            freedict = Sdict['freedict']
+            for i in toRemove.keys():
+                freedict.pop(i, None)
+            backend.forceUpdateStudent(request.session.get('netid'), {"freedict" : freedict})
+        #context = {"courses" : request.session.get('courses')}
+        #return render(request, 'assigncal/cal.html', context)
+        return HttpResponse("OK")
+    else:
+        raise Http404('')
 
 #Makes a list of events from dict of starttimes and endtimes
-def makeEvents():
-    return None
+def makeEvents(netid):
+    events = []
+    Sdict = backend.getStudent(netid)
+    if (Sdict.has_key('freedict')):
+        freedict = Sdict['freedict']
+        prevdate = None
+        for free in freedict.keys():
+            date = free.split('T')[0]
+            if (date != prevdate):
+                events.append({
+                        "title" : netid,
+                        "start" : date,
+                        "color" : "white",
+                        "rendering" : "background"
+                    })
+                prevdate = date
+            events.append({
+                    "title" : netid,
+                    "start" : free,
+                    "color" : "white",
+                    "rendering" : "background"
+                })
+    return events
 
 #adds current course selection from tab as a session variable,
 #returns ok response, so that client side can refetch events
 #via GET request to eventfeed
 @ensure_csrf_cookie
 def courses(request):
-    request.session['course'] = request.POST.dict()['course']
-    context = {"courses" : request.session.get('courses')}
-    return HttpResponse("OK")
+    if (request.method == "POST"):
+        request.session['course'] = request.POST.dict()['course']
+        context = {"courses" : request.session.get('courses')}
+        return HttpResponse("OK")
+    else:
+        raise Http404('')
 
 #fetches events from either user or course based on session
 #variable from firebase, gives JSON response of the events
 #to client side
 def eventfeed(request):
-    print ("in eventfeed and session course is " + str(request.session.get('course')))
-    context = {'events' : [
+    #print ("in eventfeed and session course is " + str(request.session.get('course')))
+    if (request.session.get('course') == "myFrees"):
+        events = makeEvents(request.session.get('netid'))
+        context = {'events' : events}
+    else:
+        context = {'events' : [
                         {
                             "title": '4 people',
                             "rendering": 'background',
@@ -394,8 +430,11 @@ def login(request):
 def gotoBB(request):
     #Pull ticket from request url
     requrl = request.get_full_path()
-    ticket = re.split("ticket=",requrl)[1]
-    
+    parse_requrl = re.split("ticket=",requrl)
+    if (len(parse_requrl) <= 1):
+        raise Http404('')
+    ticket = parse_requrl[1]
+
     #Validate ticket, get netid from it
     SITE_URL = request.session.get('SITE_URL')
     C = CASClient.CASClient(SITE_URL)
@@ -423,7 +462,8 @@ def gotoBB(request):
                 "CLA 255" : "CLA255",
                 "COS 217" : "COS217"}
     request.session['courses'] = courses
-    context = {'courses' : courses}
+    request.session['course'] = None
+    #context = {'courses' : courses}
     #return render(request, 'assigncal/cal.html', context) 
     #return HttpResponseRedirect("https://blackboard.princeton.edu/")
     return HttpResponseRedirect("/cal")
