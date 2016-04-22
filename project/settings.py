@@ -12,7 +12,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 #DEPLOYMENT MODE : toggle LOCAL or REMOTE
-DEPLOY = 'REMOTE'
+DEPLOY = 'LOCAL'
 
 #Secret keys for heroku and firebase (deploy must be LOCAL or REMOTE)
 def SECRET_KEYS(deploy):
