@@ -13,18 +13,10 @@ from django.conf import settings
 #Non-Django based dependencies
 import backend
 import CASClient
-import re
-import mechanize
-import requests
-import urllib2
+#import re
 
 #Model data structures
 from assigncal.models import Student, Course
-
-#from django.core.servers import basehttp
-
-#del basehttp._hop_headers['Transfer-Encoding']
-#del basehttp._hop_headers['proxy-authorization']
 
 @ensure_csrf_cookie
 def cal(request):
@@ -461,123 +453,20 @@ def login(request):
     C = CASClient.CASClient(SITE_URL)
     login_url = C.Authenticate()
     
-    br = mechanize.Browser()
-    cookiejar = mechanize.LWPCookieJar() 
-    br.set_cookiejar( cookiejar ) 
-    print ("COOKIEJAR BEFORE GOING TO LOGIN_URL "),
-    print(cookiejar)
-
-    # Browser options 
-    br.set_handle_equiv( True ) 
-    br.set_handle_gzip( True ) 
-    br.set_handle_redirect( True ) 
-    br.set_handle_referer( True ) 
-    br.set_handle_robots( False ) 
-    br.set_handle_refresh( mechanize._http.HTTPRefreshProcessor(), max_time = 1 )
-    br.addheaders = [ ( 'User-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1' ) ] 
-    
-    br.open(login_url) 
-    request.session['cookiejar'] = cookiejar
-    #print ("COOKIEJAR AFTER GOING TO LOGIN_URL "),
-    #print(cookiejar)
-    
-    #req = mechanize.Request(login_url)
-    #print ("req : " + str(req))
-    #res = mechanize.urlopen(req)
-    #print ("res : " + str(res))
-    #print ("res.geturl : " + str(res.geturl()))
-    #print ("res.info() : " + str(res.info()))
-    
-    #print ("res.read() : " + str(res.read()))
-
-    '''
-    request = urllib2.Request(login_url)
-    response = urllib2.urlopen(request)
-    r = HttpResponse(response.read())
-    print(response.info().keys())
-
-    for header in response.info().keys():
-        if (header != "Transfer-Encoding"):
-            r[header] = response.info()[header]
-    '''
-    
-    '''
-    res1 = requests.get(login_url)
-    #res2 = requests.get(login_url)
-    #print ("res1 :" + str(res1.text))
-    print ("res1 : " + str(res1.cookies))
-    #print ("res2 : " + str(res2.cookies))
-
-    res_out = HttpResponse(res1.text)
-    for header in res1.headers.keys():
-        if (header != "Transfer-Encoding"):
-            res_out[header] = res1.headers[header]
-    '''
-
-    #return r
-    #return res_out
-    #print (login_url)
-    #print br.response()
     return HttpResponseRedirect(login_url)
 
 def gotoBB(request):
     #Get SITE URL from Django session
     SITE_URL = request.session.get('SITE_URL')
-    #print(SITE_URL)
     
-    #full request url
-    requrl = request.get_full_path()
-    print ("http://localhost:8000" + requrl)
-
     #Get ticket
     if (request.GET.dict().has_key('ticket') == False):
         raise Http404('')
     ticket = request.GET.dict()['ticket']    
-    print ("TICKET IS " + ticket)
     
-    print ("REQUEST HOST IS :" + str(request.get_host()))
-
     #Validate ticket, get netid from it
     C = CASClient.CASClient(SITE_URL)
-    (netid, br, cookiejar) = C.Validate(ticket)
-
-    '''
-    ck = mechanize.Cookie(version=0, name='CASTGC', value=ticket, port=None, port_specified=False, domain='authenticate.princeton.edu/cas', domain_specified=False, domain_initial_dot=False, path='/', path_specified=True, secure=False, expires=None, discard=True, comment=None, comment_url=None, rest={'HttpOnly': None}, rfc2109=False)
-    cookiejar.set_cookie(ck)
-
-    print("PRINTING cookiejar in gotoBB view as  :" + str(cookiejar))
-    print
-    br.open("https://blackboard.princeton.edu/webapps/bb-auth-provider-cas-bb_bb60/execute/casLogin?cmd=login&authProviderId=_142_1&redirectUrl=https://blackboard.princeton.edu/webapps/portal/execute/defaultTab")
-    print ("COOKIEJAR AFTER GOING BACK TO CAS "),
-    print(cookiejar)
-    print
-
-    BBhtml = br.response().read()
-    with open("lol.html", "w") as lol:
-        lol.write(BBhtml)
-    '''
-    
-    #Requests library attempt to get cookies
-    #sess = requests.Session()
-    #print ("before sess.get")
-    #sess_response = sess.get(requrl)
-    #sess_response = requests.get("http://localhost:8000")
-    #print ("after sess.get")
-    #print (sess_response.cookies)
-    #for i in sess_response.history:
-    #    print (i)
-        #print (i.cookies)    
-    #print (sess.cookies.get_dict())    
-    
-    #print ("http://localhost:8000" + requrl)
-    
-    #Django session cookies
-    #print (request.GET.dict())
-    #sessionid = request.COOKIES['sessionid']
-    #print ("COOKIES ARE " + str(request.COOKIES))
-    #for i in request.META.keys():
-    #    print (i + " "),
-    #    print (request.META[i])
+    netid = C.Validate(ticket)
 
     #sSave netid to Django session for use in other views
     request.session['netid'] = netid
@@ -587,8 +476,6 @@ def gotoBB(request):
     
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
-    
-    #scrape(ticket)
 
     #Automated scraping and browsing of blackboard called here
     #After scraping
@@ -599,47 +486,4 @@ def gotoBB(request):
                 "COS 217" : "COS217"}
     request.session['courses'] = courses
     request.session['course'] = None
-    #Gina
-    #return HttpResponseRedirect("https://blackboard.princeton.edu/webapps/bb-auth-provider-cas-bb_bb60/execute/casLogin?cmd=login&authProviderId=_142_1&redirectUrl=https://blackboard.princeton.edu/webapps/portal/execute/defaultTab")
-    
-    #return HttpResponseRedirect('https://blackboard.princeton.edu/webapps/portal/execute/tabs/tabAction?tab_tab_group_id=_121_1')
-
-    #Regular
     return HttpResponseRedirect("/cal")
-
-def scrape(ticket):
-    #Mechanize library attempt to get cookies
-    br = mechanize.Browser()
-    cookiejar = mechanize.LWPCookieJar()
-    br.set_cookiejar( cookiejar ) 
-    print ("COOKIEJAR BEFORE GOING TO SITE_URL "),
-    print(cookiejar)
-    print
-    ck = mechanize.Cookie(version=0, name='CASTGC', value=ticket, port=None, port_specified=False, domain='authenticate.princeton.edu/cas', domain_specified=False, domain_initial_dot=False, path='/', path_specified=True, secure=False, expires=None, discard=True, comment=None, comment_url=None, rest={'HttpOnly': None}, rfc2109=False)
-    cookiejar.set_cookie(ck)
-
-    print ("COOKIEJAR AFTER GOING TO SITE_URL AND ADDING TICKET"),
-    print(cookiejar)    
-    print
-    # Browser options 
-    br.set_handle_equiv( True ) 
-    br.set_handle_gzip( True ) 
-    br.set_handle_redirect( True ) 
-    br.set_handle_referer( True ) 
-    br.set_handle_robots( False ) 
-    br.set_handle_refresh( mechanize._http.HTTPRefreshProcessor(), max_time = 1 )
-    br.addheaders = [ ( 'User-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1' ) ] 
-    br.open('http://localhost:8000')
-
-    print ("COOKIEJAR AFTER GOING TO SITE_URL AND ADDING TICKET"),
-    print(cookiejar)    
-    print
-
-    #br.open('https://authenticate.princeton.edu/cas/login')
-    br.open("https://blackboard.princeton.edu/webapps/bb-auth-provider-cas-bb_bb60/execute/casLogin?cmd=login&authProviderId=_142_1&redirectUrl=https://blackboard.princeton.edu/webapps/portal/execute/defaultTab")
-    print ("COOKIEJAR AFTER GOING BACK TO CAS "),
-    print(cookiejar)    
-    
-    BBhtml = br.response().read()
-    with open("lol.html", "w") as lol:
-        lol.write(BBhtml)
