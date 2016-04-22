@@ -123,6 +123,7 @@ def makeFreeList(starttime, endtime):
 #save free time blocks to users freelist
 @ensure_csrf_cookie
 def save(request):
+    if (request.method == 'POST'):
         Sdict = {"freedict" : makeFreeList(request.POST.dict()['starttime'],
                               request.POST.dict()['endtime'])
                 }
@@ -483,6 +484,7 @@ def gotoBB(request):
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
     
+    '''
     driver = webdriver.Chrome()
     driver.get("https://blackboard.princeton.edu")
     driver.find_element_by_xpath("//div[@title='I have a valid Princeton NetID and Password']").click()
@@ -563,6 +565,7 @@ def gotoBB(request):
                 print (name,link)
 
     driver.close()
+    '''
 
     #Automated scraping and browsing of blackboard called here
     #After scraping
