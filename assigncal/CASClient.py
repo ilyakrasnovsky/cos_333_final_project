@@ -2,6 +2,7 @@ import urllib, re
 class CASClient:
    def __init__(self, service_url):
       self.cas_url = 'https://authenticate.princeton.edu/cas/'
+      print ("INSIDE CASCLIENT service_url is : " + service_url)
       self.service_url = service_url + "gotoBB"
    def Authenticate(self):
       login_url = self.cas_url + 'login' \

@@ -457,6 +457,7 @@ def login(request):
 
     #Redirect to CAS login, will append ticket in response
     SITE_URL = request.session.get('SITE_URL')
+    print (SITE_URL)
     C = CASClient.CASClient(SITE_URL)
     login_url = C.Authenticate()
     
@@ -465,7 +466,7 @@ def login(request):
 def gotoBB(request):
     #Get SITE URL from Django session
     SITE_URL = request.session.get('SITE_URL')
-    
+    print ("in gotoBB" + SITE_URL)
     #Get ticket
     if (request.GET.dict().has_key('ticket') == False):
         raise Http404('')

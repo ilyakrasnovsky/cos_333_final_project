@@ -46,7 +46,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'assigncal',
-     'cas'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -58,8 +57,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'cas.middleware.CASMiddleware',
-    'django.contrib.auth.middleware.RemoteUserMiddleware',
 )
 
 ROOT_URLCONF = 'project.urls'
@@ -108,26 +105,6 @@ AUTH_PASSWORD_VALIDATORS = (
     },
 )
 
-#CAS_SERVER_URL
-CAS_SERVER_URL = "https://fed.princeton.edu/cas/login"
-CAS_LOGOUT_COMPLETELY = True
-CAS_PROVIDE_URL_TO_LOGOUT = True
-#CAS_RETRY_LOGIN = True
-
-#where our site is on the web
-SITE_URLS = { 
-'DEV': 'assign-cals-cos333.herokuapp.com', 
-'LIVE': 'NEED A LEGIT NAME' 
-} 
-
-#where our firebase is on the web
-FIREBASE_URLS = { 
-'DEV': 'https://assign-cals-cos333.firebaseio.com/', 
-'LIVE': 'NEED A LEGIT NAME' 
-} 
-
-SITE_URL = SITE_URLS['DEV'] 
-FIREBASE_URL = FIREBASE_URLS['DEV']
 #where our site is on the web
 SITE_URLS = { 
 'LOCAL': 'http://localhost:8000/',
