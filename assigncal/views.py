@@ -1,44 +1,19 @@
 from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
-<<<<<<< HEAD
 
 import backend
 
-from .forms import NameForm
-from assigncal.models import DJStudent, DJCourse, Student, Course
-from . import CASscript
-from . import pycasclienttestscript
-from django.http import HttpResponse
-from django.template import loader
-
-def cal(request):
-
-    #items = Item.objects.exclude(amount=0)
-    #dict to send to template
-    #context = {'items': items}
-    backend.add_to_db({'name' : 'string', 'payload' : 'stuff'})
-    #context = {'items' : backend.get_from_db('string')}
-    #path starts at project/templates/
-    return render(request, 'assigncal/cal.html')
-
-def login(request):
-    template = loader.get_template('assigncal/login.html')
-    returned = pycasclienttestscript.main()
-    context = {"returned":returned}
-    #context =  {"netid":netid}
-    
-    return HttpResponse(template.render(context, request))
-=======
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.conf import settings
 
-import backend
 import CASClient
 import re
-import mechanize
 
-from .forms import NameForm
-from assigncal.models import DJStudent, DJCourse, Student, Course
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+
+from assigncal.models import Student, Course
 
 SITE_URL = settings.SITE_URL
 
@@ -89,52 +64,87 @@ def gotoBB(request):
     except DJStudent.DoesNotExist, DJStudent.MultipleObjectsReturned:
         DJSobject.save()
     #print (DJStudent.objects.get(netid=netid).netid)
-    
-    #Automated scraping and browsing of blackboard called here
-    br = mechanize.Browser()
-    br.open("https://blackboard.princeton.edu/")
-    BBhtml = br.response().read()
-    #print (BBhtml)
-    
-    return HttpResponseRedirect("https://blackboard.princeton.edu/")
-    
->>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
-'''
-def item_detail(request, id):
-    try:
-        item = Item.objects.get(id=id)
-    except Item.DoesNotExist:
-        raise Http404('This item does not exist')
-    context = {'item' : item}
-    return render(request, 'inventory/item_detail.html', context)
 
-def entry(request):
-    # if this is a POST request we need to process the form data
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = NameForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-            # process the data in form.cleaned_data as required
-            #save it as model in SQLlite
-            #NEED TO CHECK FOR COLLISIONS
-            newname = UName(name = form.cleaned_data['your_name'])
-            newname.save()
-            # redirect to a new URL:
-            #return HttpResponseRedirect('/thanks/', user=newname.name)
-            #render a different html on this URL (different things!)
-            name = UName.objects.get(name=newname.name)
-            context = {'name' : name.name}
-            return render(request, 'inventory/thanks.html', context)
-    # if a GET (or any other method) we'll create a blank form
-    else:
-        form = NameForm()
+    driver = webdriver.Chrome()
+    driver.get("https://blackboard.princeton.edu")
+    driver.find_element_by_xpath("//div[@title='I have a valid Princeton NetID and Password']").click()
+    user = driver.find_element_by_id("username")
+    passw = driver.find_element_by_id("password")
+    user.send_keys(netid)
+    curr_url = driver.current_url
+    #passw.send_keys(raw_input("Enter something"))
+    #passw.send_keys(getpass.getpass())
 
-    context = {'form' : form}
-    return render(request, 'inventory/entry.html', context)
+    #time.sleep(10)
+    #WebDriverWait(driver,100).until(curr_url != driver.current_url)
+    # wait until user gets past login page
+    # try:
+    #     WebDriverWait(driver, 120).until(lambda driver: driver.find_element_by_id("globalNavPageNavArea"))
+    # finally:
+    #     driver.close()
+        # return back to login page?
+    WebDriverWait(driver, 120).until(lambda driver: driver.find_element_by_id("globalNavPageNavArea"))
 
-def thanks(request, user):
-    name = UName.objects.get(name=user)
-    context = {'name' : name.name}
-    return render(request, 'inventory/thanks.html', context)
-'''
+    #driver.find_element_by_xpath("//input[@value='Login']").click()
+    regexp1 = re.compile("Spring 2016.*?</div>", flags=re.DOTALL)
+    coursecontent = regexp1.search(driver.page_source).group(0)
+    regexp2 = re.compile(">.*?_S2016.*?<")
+    courses = re.findall(regexp2,coursecontent)
+    regexp3 = re.compile("\">.*?<")
+    courselist = []
+    # scrape courses
+    for course in courses:
+        c = regexp3.search(course)
+        if (c != None):
+            courselist.append(c.group(0))
+
+    for course in courselist:
+        course = course.split('>')[1]
+        course = course.split('<')[0]
+        print(course)
+
+    # scrape assignments
+    #regexp4 = re.compile("\"/webapps.*?\"")
+    regexp4 = re.compile("<a.*?</a>", flags=re.DOTALL)
+    ass_link = re.findall(regexp4,coursecontent)
+    # goes through each course's assignment page
+    for i in ass_link:
+        re_url = re.findall("/webapps.*?top", i)[0]
+        url_val = re_url.replace("amp;", "")
+        url = "https://blackboard.princeton.edu" + url_val
+        driver.get(url)
+
+        # click on "Assignments"
+        driver.find_element_by_link_text("Assignments").click()
+
+        # find assignments
+        regexp1 = re.compile("contentListItem.*?</div>", flags=re.DOTALL)
+        listitems = re.findall(regexp1, driver.page_source)
+
+        assignmentlinks = []
+        for items in listitems:
+            link = regexp2.search(items)
+            if (link != None):
+                assignmentlinks.append(link.group(0))
+
+        # filter out links, exclude solutions
+        regexp4 = re.compile("href=.*?>", flags=re.DOTALL)
+        regexp3 = re.compile(">.*?</span>", flags=re.DOTALL)
+
+        for a in assignmentlinks:
+            name = regexp3.search(a)
+            link = regexp4.search(a)
+            if (name != None):
+                name = (name.group(0)).split('>')[2]
+                name = name.split('<')[0]
+            if (link != None):
+                link = (link.group(0)).split('"')[1]
+                link = link.split('"')[0]
+
+            if "Sol" not in a:
+                print (name,link)
+
+    driver.close()
+
+    # idk where to return to rn
+    return HttpResponseRedirect(url)
