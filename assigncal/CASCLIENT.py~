@@ -1,7 +1,8 @@
 import urllib, re
 class CASClient:
    def __init__(self, service_url):
-      self.cas_url = 'https://authenticate.princeton.edu/cas/'
+      self.cas_url='https://authenticate.princeton.edu/cas/login?service=https%3A%2F%2Fblackboard.princeton.edu%2Fwebapps%2Fbb-auth-provider-cas-bb_bb60%2Fexecute%2FcasLogin%3Fcmd%3Dlogin%26authProviderId%3D_142_1%26redirectUrl%3Dhttps%253A%252F%252Fblackboard.princeton.edu%252Fwebapps%252Fportal%252Fexecute%252FdefaultTab%26sessionIdForLogout%3D61155351F7BBBA67585B625257A9B516'
+      #self.cas_url = 'https://authenticate.princeton.edu/cas/'
       self.service_url = service_url + "gotoBB"
    def Authenticate(self):
       login_url = self.cas_url + 'login' \
