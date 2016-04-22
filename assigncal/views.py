@@ -474,7 +474,15 @@ def gotoBB(request):
     
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
-
+    
+    #Automated scraping and browsing of blackboard called here
+    br = mechanize.Browser()
+    br.open("https://blackboard.princeton.edu/")
+    BBhtml = br.response().read()
+    #print (BBhtml)
+    
+    return HttpResponseRedirect("https://blackboard.princeton.edu/")
+    
     #Automated scraping and browsing of blackboard called here
     #After scraping
     courses = { "MAE 342" : "MAE342",

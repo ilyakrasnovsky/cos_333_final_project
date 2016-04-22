@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Development branch, latest stable releases here
 
 Stack:
