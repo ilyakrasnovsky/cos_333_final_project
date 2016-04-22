@@ -13,7 +13,6 @@ from django.conf import settings
 #Non-Django based dependencies
 import backend
 import CASClient
-#import re
 
 #Model data structures
 from assigncal.models import Student, Course
@@ -116,7 +115,6 @@ def makeFreeList(starttime, endtime):
 #save free time blocks to users freelist
 @ensure_csrf_cookie
 def save(request):
-    if (request.method == 'POST'):
         Sdict = {"freedict" : makeFreeList(request.POST.dict()['starttime'],
                               request.POST.dict()['endtime'])
                 }

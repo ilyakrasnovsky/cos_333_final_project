@@ -10,17 +10,22 @@ body {
 	font-size: 14px;	
 }
 
+
 #calendar {
 	max-width: 900px;
 	min-width: 600px;
-	
-	width: calc(100% - 210px);
-	margin: 0 auto;		
-	
+	margin: 0 auto;
+}
+
+/*Capsule class to contain the calendar div to allow it to be 
+centerd between the fixes classes sidebar and the color code sidebar*/
+.capsule {
+	width: calc(100% - 310px);
+
 	/*Position elements*/
 	position: relative;
-	top: 10px; /*10px*/
-	left: 100px;	/*210px*/
+	top: 0px;
+	left:210px;
 }
 
 .fc-today{
@@ -35,27 +40,50 @@ body {
 	height: 100%;
 	
 	/*Specify position elements*/
-	/*Issue here with people with 6+ classes*/
-	position: fixed; 
-	/*Use absolute position for standard scrolling
-	but will have some leftover room at the bottom*/
-	
+	position: fixed; 	
 	top: 0;
 	left: 0;
 }
 
-/*
-.calendar_section {	
-	max-width: 900px;
-	min-width: 600px;
+.color_code {
+	width: 100px;
 
-	width: calc(100% - 210px);
-	margin: 0 auto;		
+	/*Specify position elements*/
+	position: fixed; 	
+	top: 150px;
+	right: 0;
+}
+
+ul.color_list {	
+	/*Box model CSS properties*/
+	width: 100px;
+	margin: 0px;
+    	padding: 0px;
+	border: 0px solid navy;
+    
+	/*Text style*/
+    	list-style-type: none;
+    	text-align: center;
 	
-	position: absolute;
-	top: 10px;
-	left: 210px;
-}*/
+	/*Position elements*/
+	position: relative;
+	top: 0px;
+}
+
+li.color_list {
+    	display: block;	
+	border-bottom: 1px solid #ECECEA;	
+	
+	/*Position elements*/
+	height: 75px;
+	line-height: 75px;
+	
+	/*Text style*/
+	font-weight: bold;
+	font-size: 12px;
+   	text-decoration: none;
+	color: white;
+}
 
 .logo {
 	background-image: url("logo.jpg");
@@ -65,11 +93,11 @@ body {
 	width: 200px;
 	height: 150px;	
 	margin: 0px;
-    padding: 0px;
+    	padding: 0px;
 	border-bottom: 1px solid #ECECEA;
 	
 	/*Text style*/
-    text-align: center;
+   	text-align: center;
 	
 	/*Position elements*/
 	position: absolute;
@@ -77,17 +105,17 @@ body {
 }
 
 ul.class_list {
-	background-color: background-color: #558C89;
+	background-color: #558C89;
 	
 	/*Box model CSS properties*/
 	width: 200px;
 	margin: 0px;
-    padding: 0px;
+    	padding: 0px;
 	border: 0px solid navy;
     
 	/*Text style*/
-    list-style-type: none;
-    text-align: center;
+    	list-style-type: none;
+    	text-align: center;
 	
 	/*Position elements*/
 	position: absolute;
@@ -95,7 +123,7 @@ ul.class_list {
 }
 
 li.class_list a {
-    display: block;	
+   	display: block;	
 	border-bottom: 1px solid #ECECEA;	
 	
 	/*Position elements*/
@@ -106,10 +134,10 @@ li.class_list a {
 	color: #ECECEA;
 	font-weight: bold;
 	font-size: 24px;
-    text-decoration: none;
+   	text-decoration: none;
 }
 
 li.class_list a:hover{
-    background-color: #D9853B;
-    color: #ECECEA;
+    	background-color: #D9853B;
+    	color: #ECECEA;
 }
