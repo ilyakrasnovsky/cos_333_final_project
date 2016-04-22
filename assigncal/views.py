@@ -10,8 +10,6 @@ import re
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-import time
 
 from .forms import NameForm
 from assigncal.models import DJStudent, DJCourse, Student, Course
