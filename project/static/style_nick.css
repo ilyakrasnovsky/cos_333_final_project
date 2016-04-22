@@ -23,6 +23,11 @@ body {
 	left: 100px;	/*210px*/
 }
 
+.fc-today{
+	color: white !important;
+	background : #000 !important;
+}
+
 .classes_section {	
 	/*Background color for classes sidebar*/
 	background-color: #558C89;
