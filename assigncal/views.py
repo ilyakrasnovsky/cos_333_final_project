@@ -79,11 +79,12 @@ def gotoBB(request):
     #time.sleep(10)
     #WebDriverWait(driver,100).until(curr_url != driver.current_url)
     # wait until user gets past login page
-    try:
-        WebDriverWait(driver, 120).until(lambda driver: driver.find_element_by_id("globalNavPageNavArea"))
-    finally:
-        driver.close()
+    # try:
+    #     WebDriverWait(driver, 120).until(lambda driver: driver.find_element_by_id("globalNavPageNavArea"))
+    # finally:
+    #     driver.close()
         # return back to login page?
+    WebDriverWait(driver, 120).until(lambda driver: driver.find_element_by_id("globalNavPageNavArea"))
 
     #driver.find_element_by_xpath("//input[@value='Login']").click()
     regexp1 = re.compile("Spring 2016.*?</div>", flags=re.DOTALL)
