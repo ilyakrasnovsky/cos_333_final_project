@@ -1,5 +1,3 @@
-# `dev` branch
-
 Development branch, latest stable releases here
 
 This is the branch for the initial setup of our web app. Final

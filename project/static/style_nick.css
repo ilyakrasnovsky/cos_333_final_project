@@ -1,0 +1,115 @@
+body {
+	background-color: #AACECD;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	overflow: auto;
+	
+	/*Text style*/
+	font-family: "Segoe UI",Arial,sans-serif;
+	font-size: 14px;	
+}
+
+#calendar {
+	max-width: 900px;
+	min-width: 600px;
+	
+	width: calc(100% - 210px);
+	margin: 0 auto;		
+	
+	/*Position elements*/
+	position: relative;
+	top: 10px; /*10px*/
+	left: 100px;	/*210px*/
+}
+
+.fc-today{
+	color: white !important;
+	background : #000 !important;
+}
+
+.classes_section {	
+	/*Background color for classes sidebar*/
+	background-color: #558C89;
+	width: 200px;
+	height: 100%;
+	
+	/*Specify position elements*/
+	/*Issue here with people with 6+ classes*/
+	position: fixed; 
+	/*Use absolute position for standard scrolling
+	but will have some leftover room at the bottom*/
+	
+	top: 0;
+	left: 0;
+}
+
+/*
+.calendar_section {	
+	max-width: 900px;
+	min-width: 600px;
+
+	width: calc(100% - 210px);
+	margin: 0 auto;		
+	
+	position: absolute;
+	top: 10px;
+	left: 210px;
+}*/
+
+.logo {
+	background-image: url("logo.jpg");
+	background-repeat: no-repeat;
+	
+	/*Box model CSS properties*/
+	width: 200px;
+	height: 150px;	
+	margin: 0px;
+    padding: 0px;
+	border-bottom: 1px solid #ECECEA;
+	
+	/*Text style*/
+    text-align: center;
+	
+	/*Position elements*/
+	position: absolute;
+	top: 0px;
+}
+
+ul.class_list {
+	background-color: background-color: #558C89;
+	
+	/*Box model CSS properties*/
+	width: 200px;
+	margin: 0px;
+    padding: 0px;
+	border: 0px solid navy;
+    
+	/*Text style*/
+    list-style-type: none;
+    text-align: center;
+	
+	/*Position elements*/
+	position: absolute;
+	top: 151px;
+}
+
+li.class_list a {
+    display: block;	
+	border-bottom: 1px solid #ECECEA;	
+	
+	/*Position elements*/
+	height: 75px;
+	line-height: 75px;
+	
+	/*Text style*/
+	color: #ECECEA;
+	font-weight: bold;
+	font-size: 24px;
+    text-decoration: none;
+}
+
+li.class_list a:hover{
+    background-color: #D9853B;
+    color: #ECECEA;
+}

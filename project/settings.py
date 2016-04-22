@@ -8,6 +8,9 @@ import localcreds
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
+#DEPLOYMENT MODE : toggle LOCAL or REMOTE
+DEPLOY = 'LOCAL'
+
 #Secret keys for heroku and firebase (deploy must be LOCAL or REMOTE)
 def SECRET_KEYS(deploy):
     if (deploy == 'LOCAL'):
@@ -18,13 +21,13 @@ def SECRET_KEYS(deploy):
         print ('BAD DEPLOMENT CONDITION!')
         assert(False)
 
-#Toggle 'LOCAL' if you're developing locally via $ heroku local
-#Be sure to run localcreds.py in the project directory before
-#developing locally! (instructions in localcreds.py source code) 
-(SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS('REMOTE')
+(SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS(DEPLOY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+if (DEPLOY == 'LOCAL'):
+    DEBUG = True
+else:
+    DEBUG = False
 
 # Application definition
 INSTALLED_APPS = (
@@ -96,18 +99,21 @@ AUTH_PASSWORD_VALIDATORS = (
 
 #where our site is on the web
 SITE_URLS = { 
-'DEV': 'assign-cals-cos333.herokuapp.com', 
+'LOCAL': 'http://localhost:8000/',
+'REMOTE': 'http://assign-cals-cos333.herokuapp.com/', 
 'LIVE': 'NEED A LEGIT NAME' 
 } 
+
+SITE_URL = SITE_URLS[DEPLOY] 
 
 #where our firebase is on the web
 FIREBASE_URLS = { 
-'DEV': 'https://assign-cals-cos333.firebaseio.com/', 
+'LOCAL' : 'https://assign-cals-cos333.firebaseio.com/',
+'REMOTE': 'https://assign-cals-cos333.firebaseio.com/', 
 'LIVE': 'NEED A LEGIT NAME' 
 } 
 
-SITE_URL = SITE_URLS['DEV'] 
-FIREBASE_URL = FIREBASE_URLS['DEV']
+FIREBASE_URL = FIREBASE_URLS[DEPLOY]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
