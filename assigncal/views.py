@@ -23,8 +23,6 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
-#SITE_URL = settings.SITE_URL
-
 @ensure_csrf_cookie
 def cal(request):
     if (request.session.get('netid') == None):
@@ -465,8 +463,9 @@ def login(request):
 
 def gotoBB(request):
     #Get SITE URL from Django session
+    request.session['SITE_URL'] = settings.SITE_URL
     SITE_URL = request.session.get('SITE_URL')
-    print ("in gotoBB" + SITE_URL)
+    
     #Get ticket
     if (request.GET.dict().has_key('ticket') == False):
         raise Http404('')
