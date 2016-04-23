@@ -1,12 +1,10 @@
-<<<<<<< HEAD
-=======
+
 '''
 module : backend
 
 features firebase wrapper functions
 '''
 
->>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e
 from firebase import firebase
 from requests import HTTPError
 from django.conf import settings
@@ -16,7 +14,6 @@ FIREBASE_URL = settings.FIREBASE_URL
 FIREBASE_KEY = settings.FIREBASE_KEY
 authentication = firebase.FirebaseAuthentication(FIREBASE_KEY, 'ilyakrasnovsky@gmail.com', admin = True)
 fdb = firebase.FirebaseApplication(FIREBASE_URL, authentication=authentication)
-<<<<<<< HEAD
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
         'cas.backends.CASBackend',)
 
@@ -46,7 +43,6 @@ def get_from_db(name):
     else:
         #print ("found : " + str(retrieved.values()[0])) 
         return retrieved.values()
-=======
 
 #Add Student  information to the database by
 #dict. #Returns True if worked, False if name 
@@ -229,4 +225,3 @@ def main():
 
 if __name__ == "__main__":
     main()
->>>>>>> f6036cac74dbf01fa553dbfbab4de4ce89e2533e

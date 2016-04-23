@@ -123,6 +123,7 @@ def makeFreeList(starttime, endtime):
 #save free time blocks to users freelist
 @ensure_csrf_cookie
 def save(request):
+    if (request.method == "POST"):
         Sdict = {"freedict" : makeFreeList(request.POST.dict()['starttime'],
                               request.POST.dict()['endtime'])
                 }
@@ -511,6 +512,7 @@ def gotoBB(request):
     courses = re.findall(regexp2,coursecontent)
     regexp3 = re.compile("\">.*?<")
     courselist = []
+    course_list = {}
     # scrape courses
     for course in courses:
         c = regexp3.search(course)
@@ -521,6 +523,9 @@ def gotoBB(request):
         course = course.split('>')[1]
         course = course.split('<')[0]
         print(course)
+        regex = re.findall(".*?_",course)[0]
+        print(regex)
+        course_list[regex] = regex
 
     # scrape assignments
     #regexp4 = re.compile("\"/webapps.*?\"")
@@ -572,6 +577,6 @@ def gotoBB(request):
                 "MAE 426" : "MAE426",
                 "CLA 255" : "CLA255",
                 "COS 217" : "COS217"}
-    request.session['courses'] = courses
+    request.session['courses'] = course_list
     request.session['course'] = None
     return HttpResponseRedirect("/cal")
