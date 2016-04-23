@@ -3,17 +3,14 @@ Django Settings File
 '''
 import os
 import sys
-#sys.path.append("/cygdrive/c/Users/masel_000/Desktop/COS333/Application/Application/project")
-
 import localcreds
-
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 #DEPLOYMENT MODE : toggle LOCAL or REMOTE
-DEPLOY = 'LOCAL'
+DEPLOY = 'REMOTE'
 
 #Secret keys for heroku and firebase (deploy must be LOCAL or REMOTE)
 def SECRET_KEYS(deploy):
@@ -25,13 +22,6 @@ def SECRET_KEYS(deploy):
         print ('BAD DEPLOMENT CONDITION!')
         assert(False)
 
-#Toggle 'LOCAL' if you're developing locally via $ heroku local
-#Be sure to run localcreds.py in the project directory before
-#developing locally! (instructions in localcreds.py source code) 
-(SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS('LOCAL')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 (SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS(DEPLOY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -49,7 +39,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'assigncal',
-     'cas'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -61,8 +50,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'cas.middleware.CASMiddleware',
-    'django.contrib.auth.middleware.RemoteUserMiddleware',
 )
 
 ROOT_URLCONF = 'project.urls'
@@ -111,26 +98,6 @@ AUTH_PASSWORD_VALIDATORS = (
     },
 )
 
-#CAS_SERVER_URL
-CAS_SERVER_URL = "https://fed.princeton.edu/cas/login"
-CAS_LOGOUT_COMPLETELY = True
-CAS_PROVIDE_URL_TO_LOGOUT = True
-#CAS_RETRY_LOGIN = True
-
-#where our site is on the web
-SITE_URLS = { 
-'DEV': 'assign-cals-cos333.herokuapp.com', 
-'LIVE': 'NEED A LEGIT NAME' 
-} 
-
-#where our firebase is on the web
-FIREBASE_URLS = { 
-'DEV': 'https://assign-cals-cos333.firebaseio.com/', 
-'LIVE': 'NEED A LEGIT NAME' 
-} 
-
-SITE_URL = SITE_URLS['DEV'] 
-FIREBASE_URL = FIREBASE_URLS['DEV']
 #where our site is on the web
 SITE_URLS = { 
 'LOCAL': 'http://localhost:8000/',

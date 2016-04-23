@@ -23,8 +23,6 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
-#SITE_URL = settings.SITE_URL
-
 @ensure_csrf_cookie
 def cal(request):
     if (request.session.get('netid') == None):
@@ -457,6 +455,7 @@ def login(request):
 
     #Redirect to CAS login, will append ticket in response
     SITE_URL = request.session.get('SITE_URL')
+    print (SITE_URL)
     C = CASClient.CASClient(SITE_URL)
     login_url = C.Authenticate()
     
@@ -471,7 +470,7 @@ def gotoBB(request):
     if (request.GET.dict().has_key('ticket') == False):
         raise Http404('')
     ticket = request.GET.dict()['ticket']    
-    print ("IN gotoBB VIEW, SITE_URL is : " + str(SITE_URL))
+    
     #Validate ticket, get netid from it
     C = CASClient.CASClient(SITE_URL)
     netid = C.Validate(ticket)
@@ -485,6 +484,7 @@ def gotoBB(request):
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
     
+    '''
     driver = webdriver.Chrome()
     driver.get("https://blackboard.princeton.edu")
     driver.find_element_by_xpath("//div[@title='I have a valid Princeton NetID and Password']").click()
@@ -569,6 +569,7 @@ def gotoBB(request):
                 print (name,link)
 
     driver.close()
+    '''
 
     #Automated scraping and browsing of blackboard called here
     #After scraping

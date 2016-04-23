@@ -44,6 +44,7 @@ def get_from_db(name):
         #print ("found : " + str(retrieved.values()[0])) 
         return retrieved.values()
 
+
 #Add Student  information to the database by
 #dict. #Returns True if worked, False if name 
 #collision, and "ERROR" if connection issue ()
@@ -224,4 +225,4 @@ def main():
     print (status)
 
 if __name__ == "__main__":
-    main()
+

@@ -1,8 +1,0 @@
-
-import CASClient
-
-def main():
-	C = CASClient.CASClient()
-        print "initialized"
-	netid = C.Authenticate()
-	return netid
