@@ -22,13 +22,6 @@ def SECRET_KEYS(deploy):
         print ('BAD DEPLOMENT CONDITION!')
         assert(False)
 
-#Toggle 'LOCAL' if you're developing locally via $ heroku local
-#Be sure to run localcreds.py in the project directory before
-#developing locally! (instructions in localcreds.py source code) 
-(SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS('LOCAL')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 (SECRET_KEY, FIREBASE_KEY) = SECRET_KEYS(DEPLOY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
