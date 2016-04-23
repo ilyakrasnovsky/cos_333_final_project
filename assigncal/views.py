@@ -457,13 +457,14 @@ def login(request):
 
 def gotoBB(request):
     #Get SITE URL from Django session
+    request.session['SITE_URL'] = settings.SITE_URL
     SITE_URL = request.session.get('SITE_URL')
     
     #Get ticket
     if (request.GET.dict().has_key('ticket') == False):
         raise Http404('')
     ticket = request.GET.dict()['ticket']    
-    
+    print ("IN gotoBB VIEW, SITE_URL is : " + str(SITE_URL))
     #Validate ticket, get netid from it
     C = CASClient.CASClient(SITE_URL)
     netid = C.Validate(ticket)
