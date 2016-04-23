@@ -12,9 +12,6 @@ assigncal/*.py[cod]
 assigncal/*$py.class
 assigncal.*.pyc
 
-#SQLlite3 database backup (not used)
-db.sqlite3
-
 # C extensions
 *.so
 
