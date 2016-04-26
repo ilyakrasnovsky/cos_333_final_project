@@ -8,8 +8,14 @@ urlpatterns = [
     # url(r'^blog/', include('blog.urls')),
     #r means re
     #cascades down in order
-    #extra params are passed 
-    url(r'^$', views.cal, name='cal'),
+    #extra params are passed
+    url(r'^$', views.login, name='login'),
+    url(r'^save', views.save, name='save'),
+    url(r'^remove', views.remove, name='remove'),
+    url(r'^cal', views.cal, name='cal'),
+    url(r'^gotoBB', views.gotoBB, name='gotoBB'),
+    url(r'^eventfeed', views.eventfeed, name='eventfeed'),
+    url(r'^courses', views.courses, name='courses'),
     #<> --> named group
     #url(r'^item/(?P<id>\d+)/', views.item_detail, name = 'item_detail'),
     #url(r'^entry/', views.entry, name = 'entry'),

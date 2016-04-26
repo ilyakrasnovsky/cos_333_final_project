@@ -21,10 +21,10 @@ initializer input:
     freelist (optional)
 
 functions:
-    _djangofy : private method that returns a DJStudent()
+    DEPRECATED djangofy : method that returns a DJStudent()
                 instance, which is the same data structure
                 but inherits from django.models
-    _dictify : private method that returns a dictionary
+    dictify : method that returns a dictionary
                 representation of this instance (for json
                     conversion into firebase)
 '''
@@ -41,7 +41,7 @@ class Student:
         return  DJStudent(netid=self.netid,\
                  freelist=json.dumps(self.freelist))
 
-    def _dictify(self):
+    def dictify(self):
         return  {
                     "netid": self.netid,\
                     "freelist" : self.freelist\
@@ -64,10 +64,10 @@ initializer input:
     duedates (optional)
 
 functions:
-    _djangofy : private method that returns a DJCourse()
+    DEPRECATED djangofy : method that returns a DJCourse()
                 instance, which is the same data structure
                 but inherits from django.models
-    _dictify : private method that returns a dictionary
+    dictify : method that returns a dictionary
             representation of this instance (for json
                 conversion into firebase)
 '''

@@ -1,0 +1,143 @@
+body {
+	background-color: #AACECD;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	overflow: auto;
+	
+	/*Text style*/
+	font-family: "Segoe UI",Arial,sans-serif;
+	font-size: 14px;	
+}
+
+
+#calendar {
+	max-width: 900px;
+	min-width: 600px;
+	margin: 0 auto;
+}
+
+/*Capsule class to contain the calendar div to allow it to be 
+centerd between the fixes classes sidebar and the color code sidebar*/
+.capsule {
+	width: calc(100% - 310px);
+
+	/*Position elements*/
+	position: relative;
+	top: 0px;
+	left:210px;
+}
+
+.fc-today{
+	color: white !important;
+	background : #000 !important;
+}
+
+.classes_section {	
+	/*Background color for classes sidebar*/
+	background-color: #558C89;
+	width: 200px;
+	height: 100%;
+	
+	/*Specify position elements*/
+	position: fixed; 	
+	top: 0;
+	left: 0;
+}
+
+.color_code {
+	width: 100px;
+
+	/*Specify position elements*/
+	position: fixed; 	
+	top: 150px;
+	right: 0;
+}
+
+ul.color_list {	
+	/*Box model CSS properties*/
+	width: 100px;
+	margin: 0px;
+    	padding: 0px;
+	border: 0px solid navy;
+    
+	/*Text style*/
+    	list-style-type: none;
+    	text-align: center;
+	
+	/*Position elements*/
+	position: relative;
+	top: 0px;
+}
+
+li.color_list {
+    	display: block;	
+	border-bottom: 1px solid #ECECEA;	
+	
+	/*Position elements*/
+	height: 75px;
+	line-height: 75px;
+	
+	/*Text style*/
+	font-weight: bold;
+	font-size: 12px;
+   	text-decoration: none;
+	color: white;
+}
+
+.logo {
+	background-image: url("logo.jpg");
+	background-repeat: no-repeat;
+	
+	/*Box model CSS properties*/
+	width: 200px;
+	height: 150px;	
+	margin: 0px;
+    	padding: 0px;
+	border-bottom: 1px solid #ECECEA;
+	
+	/*Text style*/
+   	text-align: center;
+	
+	/*Position elements*/
+	position: absolute;
+	top: 0px;
+}
+
+ul.class_list {
+	background-color: #558C89;
+	
+	/*Box model CSS properties*/
+	width: 200px;
+	margin: 0px;
+    	padding: 0px;
+	border: 0px solid navy;
+    
+	/*Text style*/
+    	list-style-type: none;
+    	text-align: center;
+	
+	/*Position elements*/
+	position: absolute;
+	top: 151px;
+}
+
+li.class_list a {
+   	display: block;	
+	border-bottom: 1px solid #ECECEA;	
+	
+	/*Position elements*/
+	height: 75px;
+	line-height: 75px;
+	
+	/*Text style*/
+	color: #ECECEA;
+	font-weight: bold;
+	font-size: 24px;
+   	text-decoration: none;
+}
+
+li.class_list a:hover{
+    	background-color: #D9853B;
+    	color: #ECECEA;
+}
