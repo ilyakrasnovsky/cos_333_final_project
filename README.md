@@ -1,3 +1,4 @@
-# `dev-ilya` branch
 
-Ilya's branch off of dev
+# `dev-calAPI` branch
+
+development of Google Calendar API functionality
