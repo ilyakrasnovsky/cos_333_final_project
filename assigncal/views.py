@@ -18,6 +18,10 @@ import CASClient
 #Model data structures
 from assigncal.models import Student, Course
 
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+
 @ensure_csrf_cookie
 def cal(request):
     if (request.session.get('netid') == None):
@@ -477,7 +481,76 @@ def gotoBB(request):
     
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
+    '''
+    driver = webdriver.Chrome()
+    driver.get("https://blackboard.princeton.edu")
+    driver.find_element_by_xpath("//div[@title='I have a valid Princeton NetID and Password']").click()
+    user = driver.find_element_by_id("username")
+    passw = driver.find_element_by_id("password")
+    user.send_keys(netid)
+    curr_url = driver.current_url
 
+    WebDriverWait(driver, 120).until(lambda driver: driver.find_element_by_id("globalNavPageNavArea"))
+ 
+    #driver.find_element_by_xpath("//input[@value='Login']").click()
+    regexp1 = re.compile("Spring 2016.*?</div>", flags=re.DOTALL)
+    coursecontent = regexp1.search(driver.page_source).group(0)
+    regexp2 = re.compile(">.*?_S2016.*?<")
+    courses = re.findall(regexp2,coursecontent)
+    regexp3 = re.compile("\">.*?<")
+    courselist = []
+    # scrape courses
+    for course in courses:
+        c = regexp3.search(course)
+        if (c != None):
+            courselist.append(c.group(0))
+ 
+    for course in courselist:
+        course = course.split('>')[1]
+        course = course.split('<')[0]
+        print(course)
+
+    regexp4 = re.compile("<a.*?</a>", flags=re.DOTALL)
+    ass_link = re.findall(regexp4,coursecontent)
+     # goes through each course's assignment page
+    for i in ass_link:
+        re_url = re.findall("/webapps.*?top", i)[0]
+        url_val = re_url.replace("amp;", "")
+        url = "https://blackboard.princeton.edu" + url_val
+        driver.get(url)
+ 
+         # click on "Assignments"
+        driver.find_element_by_link_text("Assignments").click()
+ 
+         # find assignments
+        regexp1 = re.compile("contentListItem.*?</div>", flags=re.DOTALL)
+        listitems = re.findall(regexp1, driver.page_source)
+ 
+        assignmentlinks = []
+        for items in listitems:
+            link = regexp2.search(items)
+            if (link != None):
+                assignmentlinks.append(link.group(0))
+ 
+         # filter out links, exclude solutions
+        regexp4 = re.compile("href=.*?>", flags=re.DOTALL)
+        regexp3 = re.compile(">.*?</span>", flags=re.DOTALL)
+ 
+        for a in assignmentlinks:
+            name = regexp3.search(a)
+            link = regexp4.search(a)
+            if (name != None):
+                name = (name.group(0)).split('>')[2]
+                name = name.split('<')[0]
+            if (link != None):
+                link = (link.group(0)).split('"')[1]
+                link = link.split('"')[0]
+ 
+            if "Sol" not in a:
+                print (name,link)
+ 
+    driver.close()
+    '''
     #Automated scraping and browsing of blackboard called here
     #After scraping
     courses = { "MAE 342" : "MAE342",
