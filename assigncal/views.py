@@ -23,7 +23,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
-@ensure_csrf_cookie
+'''@ensure_csrf_cookie
 def cal(request):
 
     netid = CASscript.main()
@@ -39,7 +39,7 @@ def cal(request):
         raise Http404('')
     context = {"courses" : request.session.get('courses')}
     return render(request, 'assigncal/cal.html', context)
-
+'''
 #Get the next date as a (year, month, day) tuple
 #given the current date as the same tuple
 def nextDate(year, month, day):
@@ -513,6 +513,7 @@ def gotoBB(request):
     # finally:
     #     driver.close()
         # return back to login page?
+   
     WebDriverWait(driver, 120).until(lambda driver: driver.find_element_by_id("globalNavPageNavArea"))
 
     #driver.find_element_by_xpath("//input[@value='Login']").click()
