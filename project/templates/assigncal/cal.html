@@ -148,26 +148,28 @@
 			}
 	}
 </script>
- </script>
- </head>
- <body>
- <form action = "">
-  <fieldset>
+
+<form action = "">
+<fieldset>
   <label>Contact your classmates: </label>
   <input type = "text"
     id = "txtName" />
-  <input type = "button"
-    value = "Send Email"
-    onclick = function() {
-	$.ajax({
-		url: '/sendemail',
-		method: 'POST',
-		data: {'message' : "{{ txtName }}"}
-		}).done(function(){}); />
-  </fieldset>
- </form>
- </body>
-</head>
+</fieldset>
+</form>
+<button type="button">Send Email</button>
+
+ <script type="text/javascript">
+        $(document).ready(function(){
+ 	    $("button").click(function(){
+
+            $.ajax({url: '/sendemail',
+				  	method: 'POST',
+				  	data: {'message' : "{{ txtName }}"}
+
+				  	});
+				  	});
+				  	});				  	
+</script>
 <body>
 	<div class="classes_section">
 		<div class="logo"></div>	
