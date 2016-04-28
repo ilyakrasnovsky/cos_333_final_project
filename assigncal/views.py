@@ -484,8 +484,7 @@ def gotoBB(request):
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
     
-    '''
-    driver = webdriver.Chrome()
+    driver = webdriver.Firefox()
     driver.get("https://blackboard.princeton.edu")
     driver.find_element_by_xpath("//div[@title='I have a valid Princeton NetID and Password']").click()
     user = driver.find_element_by_id("username")
@@ -522,9 +521,9 @@ def gotoBB(request):
     for course in courselist:
         course = course.split('>')[1]
         course = course.split('<')[0]
-        print(course)
-        regex = re.findall(".*?_",course)[0]
-        print(regex)
+        #regex = re.findall(".*?_",course)[0]
+        #print(regex)
+        regex = course[:6]
         course_list[regex] = regex
 
     # scrape assignments
@@ -569,7 +568,6 @@ def gotoBB(request):
                 print (name,link)
 
     driver.close()
-    '''
 
     #Automated scraping and browsing of blackboard called here
     #After scraping
