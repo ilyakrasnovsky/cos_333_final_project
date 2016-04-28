@@ -4,6 +4,10 @@ module : views
 handles HTTP requets and renders views
 '''
 
+from __future__ import print_function
+import httplib2
+import os
+
 #Django based dependencies
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
@@ -21,6 +25,17 @@ from assigncal.models import Student, Course
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
+
+from apiclient import discovery
+import oauth2client
+from oauth2client import client
+from oauth2client import tools
+
+import datetime
+from email.mime.text import MIMEText
+import base64
+from apiclient import errors
+
 
 @ensure_csrf_cookie
 def cal(request):
@@ -561,3 +576,97 @@ def gotoBB(request):
     request.session['courses'] = courses
     request.session['course'] = None
     return HttpResponseRedirect("/cal")
+
+
+
+
+# If modifying these scopes, delete your previously saved credentials
+# at ~/.credentials/calendar-python-webapp.json
+SCOPES = ['https://www.googleapis.com/auth/calendar',  
+          'https://www.googleapis.com/auth/drive',
+          'https://www.googleapis.com/auth/gmail.compose',
+        'https://www.googleapis.com/auth/gmail.send']
+#SCOPES = 'https://www.googleapis.com/auth/admin.directory.resource.calendar'
+CLIENT_SECRET_FILE = 'client_secret.json'
+APPLICATION_NAME = 'Google Calendar API Python WebApp'
+
+def get_credentials():
+    """Gets valid user credentials from storage.
+    If nothing has been stored, or if the stored credentials are invalid,
+    the OAuth2 flow is completed to obtain the new credentials.
+    Returns:
+        Credentials, the obtained credential.
+    """
+    home_dir = os.path.expanduser('~')
+    credential_dir = os.path.join(home_dir, '.credentials')
+    if not os.path.exists(credential_dir):
+        os.makedirs(credential_dir)
+    credential_path = os.path.join(credential_dir,
+                                   'calendar-python-webapp.json')
+
+    store = oauth2client.file.Storage(credential_path)
+    credentials = store.get()
+    if not credentials or credentials.invalid:
+        flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, ' '.join(SCOPES))
+        flow.user_agent = APPLICATION_NAME
+        if flags:
+            credentials = tools.run_flow(flow, store, flags)
+        else: # Needed only for compatibility with Python 2.6
+            credentials = tools.run(flow, store)
+        print('Storing credentials to ' + credential_path)
+    return credentials
+
+def CreateMessage(sender, to, subject, message_text):
+  """Create a message for an email.
+
+  Args:
+    sender: Email address of the sender.
+    to: Email address of the receiver.
+    subject: The subject of the email message.
+    message_text: The text of the email message.
+
+  Returns:
+    An object containing a base64url encoded email object.
+  """
+  message = MIMEText(message_text)
+  message['to'] = to
+  message['from'] = sender
+  message['subject'] = subject
+  return {'raw': base64.urlsafe_b64encode(message.as_string())}
+
+def SendMessage(service, user_id, message):
+  """Send an email message.
+
+  Args:
+    service: Authorized Gmail API service instance.
+    user_id: User's email address. The special value "me"
+    can be used to indicate the authenticated user.
+    message: Message to be sent.
+
+  Returns:
+    Sent Message.
+  """
+  try:
+    message = (service.users().messages().send(userId=user_id, body=message)
+               .execute())
+    #print 'Message Id: %s % message['id']'
+    return message
+  except errors.HttpError, error:
+    print ("error")
+   #print 'An error occurred: %s' % error
+
+def sendemail(request):
+
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('calendar', 'v3', http=http)
+
+
+    print("--------------------------------")
+    print("SENDING EMAIL MESSAGE")
+    print("---------------------------------")
+    m = "This is a test message to test email messaging"
+    message = CreateMessage("amalleo@princeton.edu", "amalleo@princeton.edu", "test message", m)
+    SendMessage(service,"amalleo@princeton.edu",message)
+
+    return HttpResponseResponse("OK")
