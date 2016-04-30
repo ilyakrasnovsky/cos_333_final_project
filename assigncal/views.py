@@ -616,44 +616,41 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
-def CreateMessage(sender, to, subject, message_text):
-  """Create a message for an email.
 
-  Args:
-    sender: Email address of the sender.
-    to: Email address of the receiver.
-    subject: The subject of the email message.
-    message_text: The text of the email message.
+def add_event(calname,title,location, descr, start, end):
+    event = None
+    calendar = get_calendar(calname)
+    if (calendar != None):
+        new_event = {
+              'summary': title,
+              'location': location,
+              'description': descr,
+              'start': {
+                'dateTime': start,
+                'timeZone': 'America/New_York',
+              },
+              'end': {
+                'dateTime': end,
+                'timeZone': 'America/New_York',
+              },
+              #'recurrence': [
+              #  'RRULE:FREQ=DAILY;COUNT=2'
+              #],
+              'attendees': [
+                {'email': 'amalleo@princeton.edu'},
+              ],
+              'reminders': {
+                'useDefault': False,
+                'overrides': [
+                  {'method': 'email', 'minutes': 24 * 60},
+                  {'method': 'popup', 'minutes': 10},
+                ],
+              },
+            }
+        add_event_req = service.events().insert(sendNotifications=True, calendarId=calendar['id'], body=new_event)
+        event = add_event_req.execute()
+    return event
 
-  Returns:
-    An object containing a base64url encoded email object.
-  """
-  message = MIMEText(message_text)
-  message['to'] = to
-  message['from'] = sender
-  message['subject'] = subject
-  return {'raw': base64.urlsafe_b64encode(message.as_string())}
-
-def SendMessage(service, user_id, message):
-  """Send an email message.
-
-  Args:
-    service: Authorized Gmail API service instance.
-    user_id: User's email address. The special value "me"
-    can be used to indicate the authenticated user.
-    message: Message to be sent.
-
-  Returns:
-    Sent Message.
-  """
-  try:
-    message = (service.users().messages().send(userId=user_id, body=message)
-               .execute())
-    #print 'Message Id: %s % message['id']'
-    return message
-  except errors.HttpError, error:
-    print ("error")
-   #print 'An error occurred: %s' % error
 
 def sendemail(request):
 
@@ -662,11 +659,76 @@ def sendemail(request):
     service = discovery.build('calendar', 'v3', http=http)
 
 
-    print("--------------------------------")
-    print("SENDING EMAIL MESSAGE")
-    print("---------------------------------")
-    m = "This is a test message to test email messaging"
-    message = CreateMessage("amalleo@princeton.edu", "amalleo@princeton.edu", "test message", m)
-    SendMessage(service,"amalleo@princeton.edu",message)
+    #HTTP request for a list of the user's calendars
+    usr_cals_req = service.calendarList().list()
+    
+    #Execute the request, returns data in an object we call usr_cals
+    usr_cals = usr_cals_req.execute()
 
-    return HttpResponseResponse("OK")
+    createnew = True
+    #If user does not already have assignment calendar we make one:
+    for i in usr_cals['items']:
+       if i['summary'] == 'AssignCal':
+            createnew = False
+            calid = i['id']
+
+    if createnew:
+        new_cal = {
+        "kind": "calendar#calendar", # Type of the resource ("calendar#calendar").
+        "description": "This is the calendar to keep track of study session times", # Description of the calendar. Optional.
+        "summary": "AssignCal", # Title of the calendar.
+        #"etag": "A String", # ETag of the resource.
+        "timeZone": "America/New_York", # The time zone of the calendar. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional.
+         # Identifier of the calendar. To retrieve IDs call the calendarList.list() method.
+            }
+        new_cal_req = service.calendars().insert(body=new_cal)
+        new_created_cal = new_cal_req.execute()
+
+    new_event = {
+        'summary': 'COS 333 TEST EVENT',
+        'location': 'Princeton University, Princeton, NJ, 08544',
+        'description': 'Let\'s collaborate on this PSET!',
+        'start': {
+            'dateTime': '2016-07-07T09:00:00-00:00',
+            'timeZone': 'America/New_York',
+          },
+        'end': {
+            'dateTime': '2016-07-07T17:00:00-05:00',
+            'timeZone': 'America/New_York',
+          },
+          #'recurrence': [
+          #  'RRULE:FREQ=DAILY;COUNT=2'
+          #],
+          'attendees': [
+            {'email': 'amalleo@princeton.edu'},
+            {'email': 'akmalleo3@gmail.com'}
+          ],
+        #'reminders': {
+        #    'useDefault': False,
+        #    'overrides': [
+        #      {'method': 'email', 'minutes': 24 * 60},
+        #      {'method': 'email', 'minutes': 10},
+         #   ],
+         # },
+        }
+
+    #Extract a particular calendar id by name
+    calid = None
+    calname = 'AssignCal'
+
+    for i in usr_cals['items']:
+        if (i['summary'] == calname):
+            calid = i['id']
+            break
+    
+    #Use the extracted id to get the calender object via the get() request
+    if (calid != None):
+        #Add new event request
+        print("INHERE")
+        add_event_req = service.events().insert(calendarId=calid, body=new_event, sendNotifications=True)
+        add_event_req.execute()
+    else:
+        print ("Calendar with name : " + calname + " not found!")
+
+
+    return HttpResponseRedirect("/cal")
