@@ -77,7 +77,7 @@ class DJCourse(models.Model):
     duedates = models.TextField(null=True)
 
 class Course:
-    def __init__(self, name, students=None, duedates=None):
+    def __init__(self, name, students=None, duedates=None, assignments=None):
         self.name = name
         self.students = students
         self.duedates = duedates

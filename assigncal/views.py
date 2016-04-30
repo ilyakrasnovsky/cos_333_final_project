@@ -290,7 +290,7 @@ def courses(request):
 #variable from firebase, gives JSON response of the events
 #to client side
 def eventfeed(request):
-    #print ("in eventfeed and session course is " + str(request.session.get('course')))
+    print ("in eventfeed and session course is " + str(request.session.get('course')))
     if (request.session.get('course') == "myFrees"):
         events = makeEventsFromNetid(request.session.get('netid'))
     else:
@@ -373,7 +373,8 @@ def gotoBB(request):
         course = course.split('>')[1]
         course = course.split('<')[0]
         regex = course[:6]
-        course_list[regex] = regex
+        if (len(regex) == 6):
+            course_list[regex] = regex
 
     # scrape assignments
     #regexp4 = re.compile("\"/webapps.*?\"")
@@ -428,12 +429,13 @@ def gotoBB(request):
                 "CLA 255" : "CLA255",
                 "COS 217" : "COS217"}
     '''
+    print(course_list)
     request.session['courses'] = course_list
-    request.session['course'] = None
+    request.session['course'] = 'myFrees'
     #iterate over newly scraped courses
-    for i in courses.values():
+    for i in request.session.get('courses').values():
         #if not in db, add it to db
-        newCourse = Course(i,[request.session.get('netid')],"2016-01-13T12:30:00")
+        newCourse = Course(i,[request.session.get('netid')],"2016-01-13T12:30:00", assignment_list)
         added = backend.addCourse(newCourse.dictify())
         #if in db, add student's netid to course
         if (added == False):
