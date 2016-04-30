@@ -81,17 +81,20 @@ class Course:
         self.name = name
         self.students = students
         self.duedates = duedates
+        self.assignments = assignments
 
     def djangofy(self):
         return  DJCourse(name=self.name,\
                  students=json.dumps(self.students),\
-                 duedates=json.dumps(self.duedates))
+                 duedates=json.dumps(self.duedates),\
+                 assignments=json.dumps(self.assignments))
 
     def dictify(self):
         return  {
                     "name": self.name,\
                     "students" : self.students,\
-                    "duedates" : self.duedates 
+                    "duedates" : self.duedates,\
+                    "assignments" : self.assignments 
                 }
 
 '''

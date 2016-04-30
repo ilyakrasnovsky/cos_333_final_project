@@ -334,7 +334,7 @@ def gotoBB(request):
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
     
-    '''
+    
     driver = webdriver.Chrome()
     driver.get("https://blackboard.princeton.edu")
     driver.find_element_by_xpath("//div[@title='I have a valid Princeton NetID and Password']").click()
@@ -362,6 +362,7 @@ def gotoBB(request):
     courses = re.findall(regexp2,coursecontent)
     regexp3 = re.compile("\">.*?<")
     courselist = []
+    course_list = {}
     # scrape courses
     for course in courses:
         c = regexp3.search(course)
@@ -371,7 +372,8 @@ def gotoBB(request):
     for course in courselist:
         course = course.split('>')[1]
         course = course.split('<')[0]
-        print(course)
+        regex = course[:6]
+        course_list[regex] = regex
 
     # scrape assignments
     #regexp4 = re.compile("\"/webapps.*?\"")
@@ -400,6 +402,7 @@ def gotoBB(request):
         # filter out links, exclude solutions
         regexp4 = re.compile("href=.*?>", flags=re.DOTALL)
         regexp3 = re.compile(">.*?</span>", flags=re.DOTALL)
+        assignment_list = {}
 
         for a in assignmentlinks:
             name = regexp3.search(a)
@@ -410,9 +413,9 @@ def gotoBB(request):
             if (link != None):
                 link = (link.group(0)).split('"')[1]
                 link = link.split('"')[0]
-
-            if "Sol" not in a:
-                print (name,link)
+            url = "www.blackboard.princeton.edu" + link
+            assignment_list[name] = url
+            
 
     driver.close()
     '''
@@ -424,7 +427,8 @@ def gotoBB(request):
                 "MAE 426" : "MAE426",
                 "CLA 255" : "CLA255",
                 "COS 217" : "COS217"}
-    request.session['courses'] = courses
+    '''
+    request.session['courses'] = course_list
     request.session['course'] = None
     #iterate over newly scraped courses
     for i in courses.values():
