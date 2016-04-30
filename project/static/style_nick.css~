@@ -67,7 +67,7 @@ ul.color_list {
 }
 
 li.color_list {
-    display: block;	
+    	display: block;	
 	border-bottom: 1px solid #ECECEA;	
 	
 	/*Position elements*/
@@ -78,7 +78,7 @@ li.color_list {
 	font-weight: bold;
 	font-size: 12px;
    	text-decoration: none;
-	color: black;
+	color: white;
 }
 
 .logo {
