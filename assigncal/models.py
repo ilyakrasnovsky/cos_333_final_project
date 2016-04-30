@@ -77,21 +77,24 @@ class DJCourse(models.Model):
     duedates = models.TextField(null=True)
 
 class Course:
-    def __init__(self, name, students=None, duedates=None):
+    def __init__(self, name, students=None, duedates=None, assignments=None):
         self.name = name
         self.students = students
         self.duedates = duedates
+        self.assignments = assignments
 
     def _djangofy(self):
         return  DJCourse(name=self.name,\
                  students=json.dumps(self.students),\
-                 duedates=json.dumps(self.duedates))
+                 duedates=json.dumps(self.duedates),\
+                 assignments=json.dumps(self.assignments))
 
     def _dictify(self):
         return  {
                     "name": self.name,\
                     "students" : self.students,\
-                    "duedates" : self.duedates 
+                    "duedates" : self.duedates, \
+                    "assignments" : self.assignments
                 }
 
 '''

@@ -23,7 +23,18 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
-'''@ensure_csrf_cookie
+
+@ensure_csrf_cookie
+def cal(request):
+    if (request.session.get('netid') == None):
+        raise Http404('')
+    context = {"courses": request.session.get('courses')}
+    return render(request, 'assigncal/cal.html', context)
+
+
+
+'''
+@ensure_csrf_cookie
 def cal(request):
 
     netid = CASscript.main()
@@ -38,8 +49,9 @@ def cal(request):
     if (request.session.get('netid') == None):
         raise Http404('')
     context = {"courses" : request.session.get('courses')}
-    return render(request, 'assigncal/cal.html', context)
+    return render(request, 'assigncal/cal.html', context 
 '''
+
 #Get the next date as a (year, month, day) tuple
 #given the current date as the same tuple
 def nextDate(year, month, day):
@@ -494,8 +506,8 @@ def gotoBB(request):
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
     
-    '''
-    driver = webdriver.Chrome()
+    
+    driver = webdriver.Firefox()
     driver.get("https://blackboard.princeton.edu")
     driver.find_element_by_xpath("//div[@title='I have a valid Princeton NetID and Password']").click()
     user = driver.find_element_by_id("username")
@@ -523,6 +535,7 @@ def gotoBB(request):
     courses = re.findall(regexp2,coursecontent)
     regexp3 = re.compile("\">.*?<")
     courselist = []
+    course_list = {}
     # scrape courses
     for course in courses:
         c = regexp3.search(course)
@@ -532,7 +545,10 @@ def gotoBB(request):
     for course in courselist:
         course = course.split('>')[1]
         course = course.split('<')[0]
-        print(course)
+        #regex = re.findall(".*?_",course)[0]
+        #print(regex)
+        regex = course[:6]
+        course_list[regex] = regex
 
     # scrape assignments
     #regexp4 = re.compile("\"/webapps.*?\"")
@@ -576,8 +592,8 @@ def gotoBB(request):
                 print (name,link)
 
     driver.close()
+    
     '''
-
     #Automated scraping and browsing of blackboard called here
     #After scraping
     courses = { "MAE 342" : "MAE342",
@@ -585,6 +601,7 @@ def gotoBB(request):
                 "MAE 426" : "MAE426",
                 "CLA 255" : "CLA255",
                 "COS 217" : "COS217"}
-    request.session['courses'] = courses
-    request.session['course'] = None
+    '''
+    request.session['courses'] = course_list
+    #request.session['course'] = None
     return HttpResponseRedirect("/cal")
