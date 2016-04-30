@@ -431,7 +431,7 @@ def gotoBB(request):
     request.session['courses'] = course_list
     request.session['course'] = None
     #iterate over newly scraped courses
-    for i in courses.values():
+    for i in request.session.get('courses').values():
         #if not in db, add it to db
         newCourse = Course(i,[request.session.get('netid')],"2016-01-13T12:30:00")
         added = backend.addCourse(newCourse.dictify())
