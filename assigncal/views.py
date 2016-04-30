@@ -151,7 +151,8 @@ def remove(request):
         raise Http404('')
 
 #Makes a list of events from dict of starttimes and endtimes
-def makeEvents(netid):
+#for a studen,t namely, from a netid
+def makeEventsFromNetid(netid):
     events = []
     Sdict = backend.getStudent(netid)
     if (Sdict.has_key('freedict')):
@@ -188,18 +189,90 @@ def makeEvents(netid):
                     "color" : "white",
                     "rendering" : "background"
                 })
-    '''
-    prevstart = events[0]['start']
-    for i in range(0, len(events)):
-        if (i >= 1):
-            if (events[i]['start'] == events[i-1]['start']):
-                print ("same time found")
-                pass
-            else:
-                print (events[i]['start'])
-                pass
-    '''
     return events
+
+#Makes a list of events from dict of starttimes and endtimes
+#for a course, namely, from a course name
+def makeEventsFromCourse(coursename):
+    events = []
+    Cdict = backend.getCourse(coursename)
+    globalFrees = dict()
+    #Assemble global dictionary of free times and frequencies
+    #of students in those free time
+    for i in Cdict['students']:
+        student = backend.getStudent(i)
+        if (student.has_key('freedict')):
+            freedict = student['freedict']
+            for free in freedict.keys():
+                if (globalFrees.has_key(free)):
+                    globalFrees[free].append(student['netid']) #= globalFrees[free] + 1
+                else:
+                    globalFrees[free] = [student['netid']] #1
+    #Translate the globalFrees dictionary into a list of events
+    useddates = []
+    for free in globalFrees.keys():
+        (date, clock) = (free.split('T')[0],
+                    free.split('T')[1])
+        (year, month, day) = (int(date.split('-')[0]),
+                         int(date.split('-')[1]),
+                         int(date.split('-')[2]))
+        (hour, minute) = (int(clock.split(':')[0]),
+                          int(clock.split(':')[1]))                
+        (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
+        nextfree = "%04d-%02d-%02dT%02d:%02d:00" % \
+                (year, month, day, hour, minute)
+        if (date not in useddates):
+            events.append({
+                    "title" : str(len(globalFrees[free])) + " people",
+                    "start" : date,
+                    "color" : colorCode(len(globalFrees[free])),
+                })
+            events.append({
+                    "title" : str(len(globalFrees[free])) + " people",
+                    "start" : date,
+                    "color" : colorCode(len(globalFrees[free])),
+                    "rendering" : "background"
+                })
+            #get names in the list for "See Names"
+            if (len(globalFrees[free]) <= 1):
+                events.append({
+                        "title": str(len(globalFrees[free])) + " people",
+                        "start": date,
+                        "color" : colorCode(len(globalFrees[free]))
+                        #"id" : 9999
+                })
+            for netid in globalFrees[free]:
+                events.append({
+                        "title" : netid,
+                        "start" : date,
+                        "textcolor" : "white",
+                        "color" : colorCode(len(globalFrees[free]))
+                    })
+            useddates.append(date)
+        events.append({
+                "title" : "lol",
+                "start" : free,
+                "end" : nextfree,
+                "color" : colorCode(len(globalFrees[free])),
+                "rendering" : "background"
+            })
+    return events
+
+#Return color code for free time event based on number of 
+#students for that time 
+def colorCode(numStudents):
+    color = "white"
+    if (numStudents <= 1):
+        color = "red"
+    elif (numStudents == 2):
+        color = "orange"
+    elif (numStudents == 3):
+        color = "yellow"
+    elif (numStudents == 4):
+        color = "green"
+    else:
+        color = "#568203"
+    return color
 
 #adds current course selection from tab as a session variable,
 #returns ok response, so that client side can refetch events
@@ -219,9 +292,10 @@ def courses(request):
 def eventfeed(request):
     #print ("in eventfeed and session course is " + str(request.session.get('course')))
     if (request.session.get('course') == "myFrees"):
-        events = makeEvents(request.session.get('netid'))
+        events = makeEventsFromNetid(request.session.get('netid'))
         context = {'events' : events}
     else:
+        events = makeEventsFromCourse(request.session.get('course'))
         context = {'events' : [
                         {
                             "title": '4 people',
@@ -446,6 +520,7 @@ def eventfeed(request):
                         }
                 ]
         }
+    context = {"events" : events}
     return JsonResponse(context)
 
 def login(request):
@@ -576,4 +651,14 @@ def gotoBB(request):
                 "COS 217" : "COS217"}
     request.session['courses'] = courses
     request.session['course'] = None
+    #iterate over newly scraped courses
+    for i in courses.values():
+        #if not in db, add it to db
+        newCourse = Course(i,[request.session.get('netid')],"2016-01-13T12:30:00")
+        added = backend.addCourse(newCourse.dictify())
+        #if in db, add student's netid to course
+        if (added == False):
+            existCourse = backend.getCourse(i)
+            existCourse['students'].append(request.session.get('netid'))
+            backend.updateCourse(i, existCourse)
     return HttpResponseRedirect("/cal")
