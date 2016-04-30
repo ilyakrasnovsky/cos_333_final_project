@@ -173,7 +173,8 @@ def remove(request):
         raise Http404('')
 
 #Makes a list of events from dict of starttimes and endtimes
-def makeEvents(netid):
+#for a studen,t namely, from a netid
+def makeEventsFromNetid(netid):
     events = []
     Sdict = backend.getStudent(netid)
     if (Sdict.has_key('freedict')):
@@ -210,18 +211,90 @@ def makeEvents(netid):
                     "color" : "white",
                     "rendering" : "background"
                 })
-    '''
-    prevstart = events[0]['start']
-    for i in range(0, len(events)):
-        if (i >= 1):
-            if (events[i]['start'] == events[i-1]['start']):
-                print ("same time found")
-                pass
-            else:
-                print (events[i]['start'])
-                pass
-    '''
     return events
+
+#Makes a list of events from dict of starttimes and endtimes
+#for a course, namely, from a course name
+def makeEventsFromCourse(coursename):
+    events = []
+    Cdict = backend.getCourse(coursename)
+    globalFrees = dict()
+    #Assemble global dictionary of free times and frequencies
+    #of students in those free time
+    for i in Cdict['students']:
+        student = backend.getStudent(i)
+        if (student.has_key('freedict')):
+            freedict = student['freedict']
+            for free in freedict.keys():
+                if (globalFrees.has_key(free)):
+                    globalFrees[free].append(student['netid']) #= globalFrees[free] + 1
+                else:
+                    globalFrees[free] = [student['netid']] #1
+    #Translate the globalFrees dictionary into a list of events
+    useddates = []
+    for free in globalFrees.keys():
+        (date, clock) = (free.split('T')[0],
+                    free.split('T')[1])
+        (year, month, day) = (int(date.split('-')[0]),
+                         int(date.split('-')[1]),
+                         int(date.split('-')[2]))
+        (hour, minute) = (int(clock.split(':')[0]),
+                          int(clock.split(':')[1]))                
+        (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
+        nextfree = "%04d-%02d-%02dT%02d:%02d:00" % \
+                (year, month, day, hour, minute)
+        if (date not in useddates):
+            events.append({
+                    "title" : str(len(globalFrees[free])) + " people",
+                    "start" : date,
+                    "color" : colorCode(len(globalFrees[free])),
+                })
+            events.append({
+                    "title" : str(len(globalFrees[free])) + " people",
+                    "start" : date,
+                    "color" : colorCode(len(globalFrees[free])),
+                    "rendering" : "background"
+                })
+            #get names in the list for "See Names"
+            if (len(globalFrees[free]) <= 1):
+                events.append({
+                        "title": str(len(globalFrees[free])) + " people",
+                        "start": date,
+                        "color" : colorCode(len(globalFrees[free]))
+                        #"id" : 9999
+                })
+            for netid in globalFrees[free]:
+                events.append({
+                        "title" : netid,
+                        "start" : date,
+                        "textcolor" : "white",
+                        "color" : colorCode(len(globalFrees[free]))
+                    })
+            useddates.append(date)
+        events.append({
+                "title" : "lol",
+                "start" : free,
+                "end" : nextfree,
+                "color" : colorCode(len(globalFrees[free])),
+                "rendering" : "background"
+            })
+    return events
+
+#Return color code for free time event based on number of 
+#students for that time 
+def colorCode(numStudents):
+    color = "white"
+    if (numStudents <= 1):
+        color = "red"
+    elif (numStudents == 2):
+        color = "orange"
+    elif (numStudents == 3):
+        color = "yellow"
+    elif (numStudents == 4):
+        color = "green"
+    else:
+        color = "#568203"
+    return color
 
 #adds current course selection from tab as a session variable,
 #returns ok response, so that client side can refetch events
@@ -241,233 +314,10 @@ def courses(request):
 def eventfeed(request):
     #print ("in eventfeed and session course is " + str(request.session.get('course')))
     if (request.session.get('course') == "myFrees"):
-        events = makeEvents(request.session.get('netid'))
-        context = {'events' : events}
+        events = makeEventsFromNetid(request.session.get('netid'))
     else:
-        context = {'events' : [
-                        {
-                            "title": '4 people',
-                            "rendering": 'background',
-                            "start": '2016-01-12',
-                            "color" : '#568203'
-                        },
-                        {
-                            "title": '4 people',
-                            "start": '2016-01-12',
-                            "color" : '#568203',
-                            "id" : 1
-                        },
-                        {
-                            "title": "DjangoAlex",
-                            "start": '2016-01-12',
-                            "textColor" : "white",
-                            "color" : 'black'
-                        },
-                        {
-                            "title": 'Betty',
-                            "start": '2016-01-12',
-                            "textColor" : "white",
-                            "color" : 'black'
-                        },
-                        {
-                            "title": 'Chloe',
-                            "start": '2016-01-12',
-                            "textColor" : "white",
-                            "color" : 'black'
-                        },
-                        {
-                            "title": 'Mark',
-                            "start": '2016-01-12',
-                            "textColor" : "white",
-                            "color" : 'black'
-                        },
-                        {
-                            "title": 'Block1',
-                            "rendering": 'background',
-                            "start": '2016-01-12T10:30:00',
-                            "end": '2016-01-12T11:00:00',
-                            "color" : 'red',
-                            "id" : 2
-                        },
-                        {
-                            "title": 'Block2',
-                            "rendering": 'background',
-                            "color" : 'orange',
-                            "start": '2016-01-12T11:00:00',
-                            "end": '2016-01-12T11:30:00',
-                            "id" : 3
-                        },
-                        {
-                            "title": 'Block3',
-                            "rendering": 'background',
-                            "color" : 'yellow',
-                            "start": '2016-01-12T11:30:00',
-                            "end": '2016-01-12T12:00:00',
-                            "id" : 4
-                        },
-                        {
-                            "title": 'Block4',
-                            "rendering": 'background',
-                            "start": '2016-01-12T12:00:00',
-                            "color" : 'light green',
-                            "end" : '2016-01-12T12:30:00',
-                            "id" : 5
-                        },
-                        {
-                            "title": 'Block5',
-                            "rendering": 'background',
-                            "start": '2016-01-12T12:30:00',
-                            "color" : 'green',
-                            "end" : '2016-01-12T13:00:00',
-                            "id" : 6
-                        },
-                        {
-                            "title": '2 people',
-                            "rendering": 'background',
-                            "start": '2016-01-13',
-                            "color" : 'orange'
-                        },
-                        {
-                            "title": '2 people',
-                            "start": '2016-01-13',
-                            "color" : 'orange',
-                            "id" : 1
-                        },
-                        {
-                            "title": 'Alex',
-                            "start": '2016-01-13',
-                            "textColor" : "white",
-                            "color" : 'black'
-                        },
-
-                        {
-                            "title": 'Betty',
-                            "start": '2016-01-13',
-                            "textColor" : "white",
-                            "color" : 'black'
-                        },
-                        {
-                            "title": 'Block1',
-                            "rendering": 'background',
-                            "start": '2016-01-13T10:30:00',
-                            "end": '2016-01-13T11:00:00',
-                            "color" : 'red',
-                            "id" : 2
-                        },
-                        {
-                            "title": 'Block2',
-                            "rendering": 'background',
-                            "color" : 'orange',
-                            "start": '2016-01-13T11:00:00',
-                            "end": '2016-01-13T11:30:00',
-                            "id" : 3
-                        },
-                        {
-                            "title": 'Block3',
-                            "rendering": 'background',
-                            "color" : 'yellow',
-                            "start": '2016-01-13T11:30:00',
-                            "end": '2016-01-13T12:00:00',
-                            "id" : 4
-                        },
-                        {
-                            "title": 'Block4',
-                            "rendering": 'background',
-                            "start": '2016-01-13T12:00:00',
-                            "color" : '#568203',
-                            "end" : '2016-01-13T12:30:00',
-                            "id" : 5
-                        },
-                        {
-                            "title": 'Block5',
-                            "rendering": 'background',
-                            "start": '2016-01-13T12:30:00',
-                            "color" : 'green',
-                            "end" : '2016-01-13T13:00:00',
-                            "id" : 6
-                        },
-                        {
-                            "title": '3 people',
-                            "rendering": 'background',
-                            "start": '2016-01-14',
-                            "color" : 'yellow'
-                        },
-                        {
-                            "title": '3 people',
-                            "start": '2016-01-14',
-                            "color" : 'yellow',
-                            "id" : 1
-                        },
-                        {
-                            "title": 'Alex',
-                            "start": '2016-01-14',
-                            "textColor" : "white",
-                            "color" : 'black'
-                        },
-                        {
-                            "title": 'Betty',
-                            "start": '2016-01-14',
-                            "textColor" : "white",
-                            "color" : 'black'
-                        },
-                        {
-                            "title": 'Chloe',
-                            "start": '2016-01-14',
-                            "textColor" : "white",
-                            "color" : 'black'
-                        },
-                        {
-                            "title": 'Assignment due',
-                            "rendering" : "background",
-                            "start" : '2016-01-16',
-                            "color" : 'white'
-                        },
-                        {
-                            "title": 'Assignment 1 due',
-                            "start" : '2016-01-16',
-                            "textColor" : "black",
-                            "color" : 'white',
-                            "id" : 1
-                        },
-                        {
-                            "title": '1 people',
-                            "start" : '2016-01-16',
-                            "textColor" : "black",
-                            "color" : 'white',
-                            "id" : 9999
-                        },
-                        {
-                            "title": 'Chloe',
-                            "start": '2016-01-16',
-                            "textColor" : "white",
-                            "color" : 'black'
-                        },
-                        {
-                            "title": '1 people',
-                            "rendering": 'background',
-                            "start": '2016-01-15',
-                            "color" : 'red'
-                        },
-                        {
-                            "title": '1 people',
-                            "start": '2016-01-15',
-                            "color" : 'red',
-                            "id" : 1
-                        },
-                        {
-                            "title": '',
-                            "start": '2016-01-15',
-                            "color" : 'red',
-                            "id" : 9999
-                        },
-                        {
-                            "title": 'Alex',
-                            "start": '2016-01-15',
-                            "textColor" : "white",
-                            "color" : 'black'
-                        }
-                ]
-        }
+        events = makeEventsFromCourse(request.session.get('course'))
+    context = {"events" : events}
     return JsonResponse(context)
 
 def login(request):
@@ -506,8 +356,9 @@ def gotoBB(request):
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
     
-    
+
     driver = webdriver.Firefox()
+
     driver.get("https://blackboard.princeton.edu")
     driver.find_element_by_xpath("//div[@title='I have a valid Princeton NetID and Password']").click()
     user = driver.find_element_by_id("username")
@@ -545,8 +396,6 @@ def gotoBB(request):
     for course in courselist:
         course = course.split('>')[1]
         course = course.split('<')[0]
-        #regex = re.findall(".*?_",course)[0]
-        #print(regex)
         regex = course[:6]
         course_list[regex] = regex
 
@@ -577,6 +426,7 @@ def gotoBB(request):
         # filter out links, exclude solutions
         regexp4 = re.compile("href=.*?>", flags=re.DOTALL)
         regexp3 = re.compile(">.*?</span>", flags=re.DOTALL)
+        assignment_list = {}
 
         for a in assignmentlinks:
             name = regexp3.search(a)
@@ -587,9 +437,9 @@ def gotoBB(request):
             if (link != None):
                 link = (link.group(0)).split('"')[1]
                 link = link.split('"')[0]
-
-            if "Sol" not in a:
-                print (name,link)
+            url = "www.blackboard.princeton.edu" + link
+            assignment_list[name] = url
+            
 
     driver.close()
     
@@ -603,5 +453,17 @@ def gotoBB(request):
                 "COS 217" : "COS217"}
     '''
     request.session['courses'] = course_list
-    #request.session['course'] = None
+    request.session['course'] = None
+
+    #iterate over newly scraped courses
+    for i in request.session.get['courses'].values():
+        #if not in db, add it to db
+        newCourse = Course(i,[request.session.get('netid')],"2016-01-13T12:30:00")
+        added = backend.addCourse(newCourse.dictify())
+        #if in db, add student's netid to course
+        if (added == False):
+            existCourse = backend.getCourse(i)
+            if (request.session.get('netid') not in existCourse['students']):
+                existCourse['students'].append(request.session.get('netid'))
+                backend.updateCourse(i, existCourse)
     return HttpResponseRedirect("/cal")
