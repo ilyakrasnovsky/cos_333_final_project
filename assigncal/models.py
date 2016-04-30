@@ -75,6 +75,7 @@ class DJCourse(models.Model):
     name = models.CharField(max_length=7)
     students = models.TextField(null=True)
     duedates = models.TextField(null=True)
+    assignments = models.choices(null=True)
 
 class Course:
     def __init__(self, name, students=None, duedates=None, assignments=None):

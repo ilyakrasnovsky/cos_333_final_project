@@ -110,7 +110,11 @@ def updateCourse(name, Cdict):
         return "ERROR"
     else:
         return False
-    
+
+def getAssignment(course=None):
+    try:
+        return fdb.get('/courses/', 
+
 #Tester client
 def main():
     '''UNPROTECTED FIREBASE FOR RANDOM TESTING
