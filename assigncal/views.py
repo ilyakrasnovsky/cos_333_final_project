@@ -659,6 +659,7 @@ def gotoBB(request):
         #if in db, add student's netid to course
         if (added == False):
             existCourse = backend.getCourse(i)
-            existCourse['students'].append(request.session.get('netid'))
-            backend.updateCourse(i, existCourse)
+            if (request.session.get('netid') not in existCourse['students']):
+                existCourse['students'].append(request.session.get('netid'))
+                backend.updateCourse(i, existCourse)
     return HttpResponseRedirect("/cal")
