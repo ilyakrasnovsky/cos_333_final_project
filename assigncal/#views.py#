@@ -719,7 +719,6 @@ def sendemail(request):
     for i in usr_cals['items']:
         if (i['summary'] == calname):
             calid = i['id']
-            print(calid)
             break
     
     #Use the extracted id to get the calender object via the get() request
