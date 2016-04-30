@@ -99,6 +99,7 @@
 					}).done(function(data){
 						if (data.email == 'send') 
 						{
+							console.log("send");
 							// call email code
 							$.ajax({
 								url: '/sendemail',

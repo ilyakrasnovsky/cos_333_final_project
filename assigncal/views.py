@@ -611,10 +611,12 @@ def gotoBB(request):
                 "COS 333" : "COS333",
                 "MAE 426" : "MAE426",
                 "CLA 255" : "CLA255",
-                "COS 217" : "COS217"}
+                "COS 217" : "COS217",
+                "test" : "test"}
     
     print(course_list)
-    request.session['courses'] = course_list
+    #request.session['courses'] = course_list
+    request.session['courses'] = courses
     request.session['course'] = 'myFrees'
     #iterate over newly scraped courses
     for i in request.session.get('courses').values():
