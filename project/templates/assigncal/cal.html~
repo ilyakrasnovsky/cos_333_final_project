@@ -187,11 +187,11 @@
 	</div>
 	<div class="color_code">
 		<ul class="color_list">
-			<li class="color_list" style="background-color: #008000; border-top: 1px solid #ECECEA;">4+
+			<li class="color_list" style="background-color: green; border-top: 1px solid #ECECEA;">4+
  people</li>
-			<li class="color_list" style="background-color: #00B300;">3 people</li>
-			<li class="color_list" style="background-color: #0066cc;">2 people</li>
-			<li class="color_list" style="background-color: #0099ff;">1 person</li>
+			<li class="color_list" style="background-color: yellow">3 people</li>
+			<li class="color_list" style="background-color: orange;">2 people</li>
+			<li class="color_list" style="background-color: red;">1 person</li>
 	</div>
 
 <div style="background-color: green;
