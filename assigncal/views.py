@@ -404,8 +404,6 @@ def gotoBB(request):
             course_list[regex] = regex
         #regex = re.findall(".*?_",course)[0]
         #print(regex)
-        regex = course[:6]
-        course_list[regex] = regex
 
     # scrape assignments
     #regexp4 = re.compile("\"/webapps.*?\"")
@@ -453,16 +451,17 @@ def gotoBB(request):
 
     #Automated scraping and browsing of blackboard called here
     #After scraping
-    courses = { "MAE 342" : "MAE342",
-                "COS 333" : "COS333",
-                "MAE 426" : "MAE426",
-                "CLA 255" : "CLA255",
-                "COS 217" : "COS217",
-                "test" : "test"}
+    # courses = { "MAE 342" : "MAE342",
+    #             "COS 333" : "COS333",
+    #             "MAE 426" : "MAE426",
+    #             "CLA 255" : "CLA255",
+    #             "COS 217" : "COS217",
+    #             "test" : "test"}
     
-    print(course_list)
+    course_list['Email'] = 'Email'
     #request.session['courses'] = course_list
-    request.session['courses'] = courses
+    print(course_list)
+    request.session['courses'] = course_list
     request.session['course'] = 'myFrees'
     #iterate over newly scraped courses
     for i in request.session.get('courses').values():
@@ -536,7 +535,7 @@ def add_event(calname,title,location, descr, start, end):
               #  'RRULE:FREQ=DAILY;COUNT=2'
               #],
               'attendees': [
-                {'email': 'amalleo@princeton.edu'},
+                {'email': 'ghong@princeton.edu'},
               ],
               'reminders': {
                 'useDefault': False,
@@ -552,7 +551,6 @@ def add_event(calname,title,location, descr, start, end):
 
 
 def sendemail(request):
-
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)
@@ -588,19 +586,21 @@ def sendemail(request):
         'location': 'Princeton University, Princeton, NJ, 08544',
         'description': 'Let\'s collaborate on this PSET!',
         'start': {
-            'dateTime': '2016-07-07T09:00:00-00:00',
+            # 'dateTime': '2016-07-07T09:00:00-00:00',
+            'dateTime': request.POST.dict()['starttime'],
             'timeZone': 'America/New_York',
           },
         'end': {
-            'dateTime': '2016-07-07T17:00:00-05:00',
+            'dateTime': request.POST.dict()['endtime'],
+            # 'dateTime': '2016-07-07T17:00:00-05:00',
             'timeZone': 'America/New_York',
           },
           #'recurrence': [
           #  'RRULE:FREQ=DAILY;COUNT=2'
           #],
           'attendees': [
-            {'email': 'amalleo@princeton.edu'},
-            {'email': 'akmalleo3@gmail.com'}
+            {'email': 'ghong@princeton.edu'},
+            {'email': 'striketheghong@gmail.com'}
           ],
         #'reminders': {
         #    'useDefault': False,

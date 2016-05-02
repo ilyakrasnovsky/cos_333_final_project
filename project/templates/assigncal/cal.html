@@ -87,10 +87,14 @@
 					$('#calendar').fullCalendar('gotoDate',start);
 					$('#calendar').fullCalendar('changeView','agendaDay');	
 				}
+				// automatically adds to freelist?
 				else
 				{
+					var starttime = start.format();
+					var endtime = end.format();
 					/* 
 					 ajax request, get session variable
+					 checks if user is in "Email" context
 					 */ 
 					$.ajax({
 						url: '/email',
@@ -103,13 +107,20 @@
 							// call email code
 							$.ajax({
 								url: '/sendemail',
-								method: 'GET',
+								method: 'POST',
+								data: {'starttime': starttime,
+										'endtime': endtime},
 							});
+							// unset session variable
+							// $.ajax({
+							// 	url: '/email',
+							// 	method: 'POST',
+							// 	data: {'email': 'no'},
+							// });
 						}
 					});
 
-					var starttime = start.format();
-					var endtime = end.format();
+					// adds time block to user's frees
 					$.ajax({
 				  		url: '/save',
 				  		method: 'POST',
@@ -166,15 +177,13 @@
 			return false;
 			}
 		// test button for email function
-		var test = document.getElementById("test");
-		test.onclick = function() {
+		var Email = document.getElementById("Email");
+		Email.onclick = function() {
+			console.log("clicked");
 			$.ajax({
 				url: '/email',
 				method: 'POST',
 				data: {'email': 'send'}
-			}).done(function() {
-				$('#calendar').fullCalendar('refetchEvents');
-				$('#calendar').fullCalendar('changeView','month');
 			});
 		}
 	}
