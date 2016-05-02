@@ -87,6 +87,7 @@
 					$('#calendar').fullCalendar('gotoDate',start);
 					$('#calendar').fullCalendar('changeView','agendaDay');	
 				}
+				// automatically adds to freelist?
 				else
 				{
 					var starttime = start.format();
@@ -111,11 +112,11 @@
 										'endtime': endtime},
 							});
 							// unset session variable
-							$.ajax({
-								url: '/email',
-								method: 'POST',
-								data: {'email': 'no'},
-							});
+							// $.ajax({
+							// 	url: '/email',
+							// 	method: 'POST',
+							// 	data: {'email': 'no'},
+							// });
 						}
 					});
 
