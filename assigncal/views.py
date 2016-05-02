@@ -362,6 +362,7 @@ def gotoBB(request):
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
 
+    '''
     driver = webdriver.Chrome()
     driver.get("https://blackboard.princeton.edu")
     driver.find_element_by_xpath("//div[@title='I have a valid Princeton NetID and Password']").click()
@@ -448,32 +449,31 @@ def gotoBB(request):
             
 
     driver.close()
+    '''
 
     #Automated scraping and browsing of blackboard called here
     #After scraping
-    # courses = { "MAE 342" : "MAE342",
-    #             "COS 333" : "COS333",
-    #             "MAE 426" : "MAE426",
-    #             "CLA 255" : "CLA255",
-    #             "COS 217" : "COS217",
-    #             "test" : "test"}
+    courses = { "ANT 204" : "ANT204",
+             "COS 333" : "COS333",
+             "COS 340" : "COS340",
+             "ENG 402" : "ENG402",
+             "Email Students" : "Email"}
     
-    course_list['Email'] = 'Email'
-    #request.session['courses'] = course_list
-    print(course_list)
-    request.session['courses'] = course_list
+    #course_list['Email'] = 'Email'
+    request.session['courses'] = courses
     request.session['course'] = 'myFrees'
     #iterate over newly scraped courses
     for i in request.session.get('courses').values():
-        #if not in db, add it to db
-        newCourse = Course(i,[request.session.get('netid')],"2016-01-13T12:30:00", assignment_list)
-        added = backend.addCourse(newCourse.dictify())
-        #if in db, add student's netid to course
-        if (added == False):
-            existCourse = backend.getCourse(i)
-            if (request.session.get('netid') not in existCourse['students']):
-                existCourse['students'].append(request.session.get('netid'))
-                backend.updateCourse(i, existCourse)
+        if (i != "Email"):
+            #if not in db, add it to db
+            newCourse = Course(i,[request.session.get('netid')],"2016-01-13T12:30:00")
+            added = backend.addCourse(newCourse.dictify())
+            #if in db, add student's netid to course
+            if (added == False):
+                existCourse = backend.getCourse(i)
+                if (request.session.get('netid') not in existCourse['students']):
+                    existCourse['students'].append(request.session.get('netid'))
+                    backend.updateCourse(i, existCourse)
     return HttpResponseRedirect("/cal")
 
 

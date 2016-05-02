@@ -82,11 +82,11 @@ li.color_list {
 	font-weight: bold;
 	font-size: 12px;
    	text-decoration: none;
-	color: white;
+	color: black;
 }
 
 .logo {
-	background-image: url("logo.jpg");
+	background-image: url("AssignCalLogo.png");
 	background-repeat: no-repeat;
 	
 	/*Box model CSS properties*/
