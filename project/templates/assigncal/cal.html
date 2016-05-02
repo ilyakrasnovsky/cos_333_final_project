@@ -89,6 +89,25 @@
 				}
 				else
 				{
+					/* 
+					 ajax request, get session variable
+					 */ 
+					$.ajax({
+						url: '/email',
+						method: 'GET',
+						datatype: 'text',
+					}).done(function(data){
+						if (data.email == 'send') 
+						{
+							console.log("send");
+							// call email code
+							$.ajax({
+								url: '/sendemail',
+								method: 'GET',
+							});
+						}
+					});
+
 					var starttime = start.format();
 					var endtime = end.format();
 					$.ajax({
@@ -146,6 +165,18 @@
 			});
 			return false;
 			}
+		// test button for email function
+		var test = document.getElementById("test");
+		test.onclick = function() {
+			$.ajax({
+				url: '/email',
+				method: 'POST',
+				data: {'email': 'send'}
+			}).done(function() {
+				$('#calendar').fullCalendar('refetchEvents');
+				$('#calendar').fullCalendar('changeView','month');
+			});
+		}
 	}
 </script>
 </head>

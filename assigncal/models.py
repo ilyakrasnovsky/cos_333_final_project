@@ -37,10 +37,6 @@ class Student:
         self.netid = netid
         self.freelist = freelist
 
-    def _djangofy(self):
-        return  DJStudent(netid=self.netid,\
-                 freelist=json.dumps(self.freelist))
-
     def dictify(self):
         return  {
                     "netid": self.netid,\

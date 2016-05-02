@@ -17,26 +17,25 @@ from django.conf import settings
 #Non-Django based dependencies
 import backend
 import CASClient
-import re
-import os
+#import re
 
-# oauth2client
+#Model data structures
+from assigncal.models import Student, Course
+
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+
 from apiclient import discovery
 import oauth2client
 from oauth2client import client
 from oauth2client import tools
 
 import datetime
+from email.mime.text import MIMEText
+import base64
 from apiclient import errors
-import argparse
 
-#Model data structures
-from assigncal.models import Student, Course
-
-# Selenium
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
 
 @ensure_csrf_cookie
 def cal(request):
@@ -136,7 +135,7 @@ def makeFreeList(starttime, endtime):
 #save free time blocks to users freelist
 @ensure_csrf_cookie
 def save(request):
-    if (request.method == "POST"):
+    if (request.method == 'POST'):
         Sdict = {"freedict" : makeFreeList(request.POST.dict()['starttime'],
                               request.POST.dict()['endtime'])
                 }
@@ -166,8 +165,7 @@ def remove(request):
         raise Http404('')
 
 #Makes a list of events from dict of starttimes and endtimes
-#for a studen,t namely, from a netid
-def makeEventsFromNetid(netid):
+def makeEvents(netid):
     events = []
     Sdict = backend.getStudent(netid)
     if (Sdict.has_key('freedict')):
@@ -204,90 +202,18 @@ def makeEventsFromNetid(netid):
                     "color" : "white",
                     "rendering" : "background"
                 })
+    '''
+    prevstart = events[0]['start']
+    for i in range(0, len(events)):
+        if (i >= 1):
+            if (events[i]['start'] == events[i-1]['start']):
+                print ("same time found")
+                pass
+            else:
+                print (events[i]['start'])
+                pass
+    '''
     return events
-
-#Makes a list of events from dict of starttimes and endtimes
-#for a course, namely, from a course name
-def makeEventsFromCourse(coursename):
-    events = []
-    Cdict = backend.getCourse(coursename)
-    globalFrees = dict()
-    #Assemble global dictionary of free times and frequencies
-    #of students in those free time
-    for i in Cdict['students']:
-        student = backend.getStudent(i)
-        if (student.has_key('freedict')):
-            freedict = student['freedict']
-            for free in freedict.keys():
-                if (globalFrees.has_key(free)):
-                    globalFrees[free].append(student['netid']) #= globalFrees[free] + 1
-                else:
-                    globalFrees[free] = [student['netid']] #1
-    #Translate the globalFrees dictionary into a list of events
-    useddates = []
-    for free in globalFrees.keys():
-        (date, clock) = (free.split('T')[0],
-                    free.split('T')[1])
-        (year, month, day) = (int(date.split('-')[0]),
-                         int(date.split('-')[1]),
-                         int(date.split('-')[2]))
-        (hour, minute) = (int(clock.split(':')[0]),
-                          int(clock.split(':')[1]))                
-        (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
-        nextfree = "%04d-%02d-%02dT%02d:%02d:00" % \
-                (year, month, day, hour, minute)
-        if (date not in useddates):
-            events.append({
-                    "title" : str(len(globalFrees[free])) + " people",
-                    "start" : date,
-                    "color" : colorCode(len(globalFrees[free])),
-                })
-            events.append({
-                    "title" : str(len(globalFrees[free])) + " people",
-                    "start" : date,
-                    "color" : colorCode(len(globalFrees[free])),
-                    "rendering" : "background"
-                })
-            #get names in the list for "See Names"
-            if (len(globalFrees[free]) <= 1):
-                events.append({
-                        "title": str(len(globalFrees[free])) + " people",
-                        "start": date,
-                        "color" : colorCode(len(globalFrees[free]))
-                        #"id" : 9999
-                })
-            for netid in globalFrees[free]:
-                events.append({
-                        "title" : netid,
-                        "start" : date,
-                        "textcolor" : "white",
-                        "color" : colorCode(len(globalFrees[free]))
-                    })
-            useddates.append(date)
-        events.append({
-                "title" : "lol",
-                "start" : free,
-                "end" : nextfree,
-                "color" : colorCode(len(globalFrees[free])),
-                "rendering" : "background"
-            })
-    return events
-
-#Return color code for free time event based on number of 
-#students for that time 
-def colorCode(numStudents):
-    color = "white"
-    if (numStudents <= 1):
-        color = "red"
-    elif (numStudents == 2):
-        color = "orange"
-    elif (numStudents == 3):
-        color = "yellow"
-    elif (numStudents == 4):
-        color = "green"
-    else:
-        color = "#568203"
-    return color
 
 #adds current course selection from tab as a session variable,
 #returns ok response, so that client side can refetch events
@@ -301,29 +227,239 @@ def courses(request):
     else:
         raise Http404('')
 
-# set session variable for email, return OK response
-def email(request):
-    if (request.method == "POST"):
-        request.session['email'] = request.POST.dict()['email']
-        print(request.session.get('email'))
-        return HttpResponse("OK")
-    elif (request.method == "GET"):
-        emailvar = {'email': request.session.get('email')}
-        return JsonResponse(emailvar)
-    else:
-        raise Http404('')
-
-
 #fetches events from either user or course based on session
 #variable from firebase, gives JSON response of the events
 #to client side
 def eventfeed(request):
-    print ("in eventfeed and session course is " + str(request.session.get('course')))
+    #print ("in eventfeed and session course is " + str(request.session.get('course')))
     if (request.session.get('course') == "myFrees"):
-        events = makeEventsFromNetid(request.session.get('netid'))
+        events = makeEvents(request.session.get('netid'))
+        context = {'events' : events}
     else:
-        events = makeEventsFromCourse(request.session.get('course'))
-    context = {"events" : events}
+        context = {'events' : [
+                        {
+                            "title": '4 people',
+                            "rendering": 'background',
+                            "start": '2016-01-12',
+                            "color" : '#568203'
+                        },
+                        {
+                            "title": '4 people',
+                            "start": '2016-01-12',
+                            "color" : '#568203',
+                            "id" : 1
+                        },
+                        {
+                            "title": "DjangoAlex",
+                            "start": '2016-01-12',
+                            "textColor" : "white",
+                            "color" : 'black'
+                        },
+                        {
+                            "title": 'Betty',
+                            "start": '2016-01-12',
+                            "textColor" : "white",
+                            "color" : 'black'
+                        },
+                        {
+                            "title": 'Chloe',
+                            "start": '2016-01-12',
+                            "textColor" : "white",
+                            "color" : 'black'
+                        },
+                        {
+                            "title": 'Mark',
+                            "start": '2016-01-12',
+                            "textColor" : "white",
+                            "color" : 'black'
+                        },
+                        {
+                            "title": 'Block1',
+                            "rendering": 'background',
+                            "start": '2016-01-12T10:30:00',
+                            "end": '2016-01-12T11:00:00',
+                            "color" : 'red',
+                            "id" : 2
+                        },
+                        {
+                            "title": 'Block2',
+                            "rendering": 'background',
+                            "color" : 'orange',
+                            "start": '2016-01-12T11:00:00',
+                            "end": '2016-01-12T11:30:00',
+                            "id" : 3
+                        },
+                        {
+                            "title": 'Block3',
+                            "rendering": 'background',
+                            "color" : 'yellow',
+                            "start": '2016-01-12T11:30:00',
+                            "end": '2016-01-12T12:00:00',
+                            "id" : 4
+                        },
+                        {
+                            "title": 'Block4',
+                            "rendering": 'background',
+                            "start": '2016-01-12T12:00:00',
+                            "color" : 'light green',
+                            "end" : '2016-01-12T12:30:00',
+                            "id" : 5
+                        },
+                        {
+                            "title": 'Block5',
+                            "rendering": 'background',
+                            "start": '2016-01-12T12:30:00',
+                            "color" : 'green',
+                            "end" : '2016-01-12T13:00:00',
+                            "id" : 6
+                        },
+                        {
+                            "title": '2 people',
+                            "rendering": 'background',
+                            "start": '2016-01-13',
+                            "color" : 'orange'
+                        },
+                        {
+                            "title": '2 people',
+                            "start": '2016-01-13',
+                            "color" : 'orange',
+                            "id" : 1
+                        },
+                        {
+                            "title": 'Alex',
+                            "start": '2016-01-13',
+                            "textColor" : "white",
+                            "color" : 'black'
+                        },
+
+                        {
+                            "title": 'Betty',
+                            "start": '2016-01-13',
+                            "textColor" : "white",
+                            "color" : 'black'
+                        },
+                        {
+                            "title": 'Block1',
+                            "rendering": 'background',
+                            "start": '2016-01-13T10:30:00',
+                            "end": '2016-01-13T11:00:00',
+                            "color" : 'red',
+                            "id" : 2
+                        },
+                        {
+                            "title": 'Block2',
+                            "rendering": 'background',
+                            "color" : 'orange',
+                            "start": '2016-01-13T11:00:00',
+                            "end": '2016-01-13T11:30:00',
+                            "id" : 3
+                        },
+                        {
+                            "title": 'Block3',
+                            "rendering": 'background',
+                            "color" : 'yellow',
+                            "start": '2016-01-13T11:30:00',
+                            "end": '2016-01-13T12:00:00',
+                            "id" : 4
+                        },
+                        {
+                            "title": 'Block4',
+                            "rendering": 'background',
+                            "start": '2016-01-13T12:00:00',
+                            "color" : '#568203',
+                            "end" : '2016-01-13T12:30:00',
+                            "id" : 5
+                        },
+                        {
+                            "title": 'Block5',
+                            "rendering": 'background',
+                            "start": '2016-01-13T12:30:00',
+                            "color" : 'green',
+                            "end" : '2016-01-13T13:00:00',
+                            "id" : 6
+                        },
+                        {
+                            "title": '3 people',
+                            "rendering": 'background',
+                            "start": '2016-01-14',
+                            "color" : 'yellow'
+                        },
+                        {
+                            "title": '3 people',
+                            "start": '2016-01-14',
+                            "color" : 'yellow',
+                            "id" : 1
+                        },
+                        {
+                            "title": 'Alex',
+                            "start": '2016-01-14',
+                            "textColor" : "white",
+                            "color" : 'black'
+                        },
+                        {
+                            "title": 'Betty',
+                            "start": '2016-01-14',
+                            "textColor" : "white",
+                            "color" : 'black'
+                        },
+                        {
+                            "title": 'Chloe',
+                            "start": '2016-01-14',
+                            "textColor" : "white",
+                            "color" : 'black'
+                        },
+                        {
+                            "title": 'Assignment due',
+                            "rendering" : "background",
+                            "start" : '2016-01-16',
+                            "color" : 'white'
+                        },
+                        {
+                            "title": 'Assignment 1 due',
+                            "start" : '2016-01-16',
+                            "textColor" : "black",
+                            "color" : 'white',
+                            "id" : 1
+                        },
+                        {
+                            "title": '1 people',
+                            "start" : '2016-01-16',
+                            "textColor" : "black",
+                            "color" : 'white',
+                            "id" : 9999
+                        },
+                        {
+                            "title": 'Chloe',
+                            "start": '2016-01-16',
+                            "textColor" : "white",
+                            "color" : 'black'
+                        },
+                        {
+                            "title": '1 people',
+                            "rendering": 'background',
+                            "start": '2016-01-15',
+                            "color" : 'red'
+                        },
+                        {
+                            "title": '1 people',
+                            "start": '2016-01-15',
+                            "color" : 'red',
+                            "id" : 1
+                        },
+                        {
+                            "title": '',
+                            "start": '2016-01-15',
+                            "color" : 'red',
+                            "id" : 9999
+                        },
+                        {
+                            "title": 'Alex',
+                            "start": '2016-01-15',
+                            "textColor" : "white",
+                            "color" : 'black'
+                        }
+                ]
+        }
     return JsonResponse(context)
 
 def login(request):
@@ -333,7 +469,6 @@ def login(request):
 
     #Redirect to CAS login, will append ticket in response
     SITE_URL = request.session.get('SITE_URL')
-    print (SITE_URL)
     C = CASClient.CASClient(SITE_URL)
     login_url = C.Authenticate()
     
@@ -348,7 +483,7 @@ def gotoBB(request):
     if (request.GET.dict().has_key('ticket') == False):
         raise Http404('')
     ticket = request.GET.dict()['ticket']    
-    
+    print ("IN gotoBB VIEW, SITE_URL is : " + str(SITE_URL))
     #Validate ticket, get netid from it
     C = CASClient.CASClient(SITE_URL)
     netid = C.Validate(ticket)
@@ -361,7 +496,7 @@ def gotoBB(request):
     
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
-
+    '''
     driver = webdriver.Chrome()
     driver.get("https://blackboard.princeton.edu")
     driver.find_element_by_xpath("//div[@title='I have a valid Princeton NetID and Password']").click()
@@ -369,19 +504,9 @@ def gotoBB(request):
     passw = driver.find_element_by_id("password")
     user.send_keys(netid)
     curr_url = driver.current_url
-    #passw.send_keys(raw_input("Enter something"))
-    #passw.send_keys(getpass.getpass())
 
-    #time.sleep(10)
-    #WebDriverWait(driver,100).until(curr_url != driver.current_url)
-    # wait until user gets past login page
-    # try:
-    #     WebDriverWait(driver, 120).until(lambda driver: driver.find_element_by_id("globalNavPageNavArea"))
-    # finally:
-    #     driver.close()
-        # return back to login page?
     WebDriverWait(driver, 120).until(lambda driver: driver.find_element_by_id("globalNavPageNavArea"))
-
+ 
     #driver.find_element_by_xpath("//input[@value='Login']").click()
     regexp1 = re.compile("Spring 2016.*?</div>", flags=re.DOTALL)
     coursecontent = regexp1.search(driver.page_source).group(0)
@@ -389,53 +514,43 @@ def gotoBB(request):
     courses = re.findall(regexp2,coursecontent)
     regexp3 = re.compile("\">.*?<")
     courselist = []
-    course_list = {}
     # scrape courses
     for course in courses:
         c = regexp3.search(course)
         if (c != None):
             courselist.append(c.group(0))
-
+ 
     for course in courselist:
         course = course.split('>')[1]
         course = course.split('<')[0]
-        regex = course[:6]
-        if (len(regex) == 6):
-            course_list[regex] = regex
-        #regex = re.findall(".*?_",course)[0]
-        #print(regex)
-        regex = course[:6]
-        course_list[regex] = regex
+        print(course)
 
-    # scrape assignments
-    #regexp4 = re.compile("\"/webapps.*?\"")
     regexp4 = re.compile("<a.*?</a>", flags=re.DOTALL)
     ass_link = re.findall(regexp4,coursecontent)
-    # goes through each course's assignment page
+     # goes through each course's assignment page
     for i in ass_link:
         re_url = re.findall("/webapps.*?top", i)[0]
         url_val = re_url.replace("amp;", "")
         url = "https://blackboard.princeton.edu" + url_val
         driver.get(url)
-
-        # click on "Assignments"
+ 
+         # click on "Assignments"
         driver.find_element_by_link_text("Assignments").click()
-
-        # find assignments
+ 
+         # find assignments
         regexp1 = re.compile("contentListItem.*?</div>", flags=re.DOTALL)
         listitems = re.findall(regexp1, driver.page_source)
-
+ 
         assignmentlinks = []
         for items in listitems:
             link = regexp2.search(items)
             if (link != None):
                 assignmentlinks.append(link.group(0))
-
-        # filter out links, exclude solutions
+ 
+         # filter out links, exclude solutions
         regexp4 = re.compile("href=.*?>", flags=re.DOTALL)
         regexp3 = re.compile(">.*?</span>", flags=re.DOTALL)
-        assignment_list = {}
-
+ 
         for a in assignmentlinks:
             name = regexp3.search(a)
             link = regexp4.search(a)
@@ -445,37 +560,24 @@ def gotoBB(request):
             if (link != None):
                 link = (link.group(0)).split('"')[1]
                 link = link.split('"')[0]
-            url = "www.blackboard.princeton.edu" + link
-            assignment_list[name] = url
-            
-
+ 
+            if "Sol" not in a:
+                print (name,link)
+ 
     driver.close()
-
+    '''
     #Automated scraping and browsing of blackboard called here
     #After scraping
     courses = { "MAE 342" : "MAE342",
                 "COS 333" : "COS333",
                 "MAE 426" : "MAE426",
                 "CLA 255" : "CLA255",
-                "COS 217" : "COS217",
-                "test" : "test"}
-    
-    print(course_list)
-    #request.session['courses'] = course_list
+                "COS 217" : "COS217"}
     request.session['courses'] = courses
-    request.session['course'] = 'myFrees'
-    #iterate over newly scraped courses
-    for i in request.session.get('courses').values():
-        #if not in db, add it to db
-        newCourse = Course(i,[request.session.get('netid')],"2016-01-13T12:30:00", assignment_list)
-        added = backend.addCourse(newCourse.dictify())
-        #if in db, add student's netid to course
-        if (added == False):
-            existCourse = backend.getCourse(i)
-            if (request.session.get('netid') not in existCourse['students']):
-                existCourse['students'].append(request.session.get('netid'))
-                backend.updateCourse(i, existCourse)
+    request.session['course'] = None
     return HttpResponseRedirect("/cal")
+
+
 
 
 # If modifying these scopes, delete your previously saved credentials
@@ -504,14 +606,13 @@ def get_credentials():
 
     store = oauth2client.file.Storage(credential_path)
     credentials = store.get()
-    flags = None
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, ' '.join(SCOPES))
         flow.user_agent = APPLICATION_NAME
         if flags:
             credentials = tools.run_flow(flow, store, flags)
         else: # Needed only for compatibility with Python 2.6
-            credentials = tools.run_flow(flow, store)
+            credentials = tools.run(flow, store)
         print('Storing credentials to ' + credential_path)
     return credentials
 
@@ -618,7 +719,6 @@ def sendemail(request):
     for i in usr_cals['items']:
         if (i['summary'] == calname):
             calid = i['id']
-            print(calid)
             break
     
     #Use the extracted id to get the calender object via the get() request
