@@ -37,10 +37,6 @@ class Student:
         self.netid = netid
         self.freelist = freelist
 
-    def _djangofy(self):
-        return  DJStudent(netid=self.netid,\
-                 freelist=json.dumps(self.freelist))
-
     def dictify(self):
         return  {
                     "netid": self.netid,\
@@ -75,7 +71,7 @@ class DJCourse(models.Model):
     name = models.CharField(max_length=7)
     students = models.TextField(null=True)
     duedates = models.TextField(null=True)
-    assignments = models.choices(null=True)
+   # assignments = models.choices(null=True)
 
 class Course:
     def __init__(self, name, students=None, duedates=None, assignments=None):
@@ -94,13 +90,8 @@ class Course:
         return  {
                     "name": self.name,\
                     "students" : self.students,\
-<<<<<<< HEAD
                     "duedates" : self.duedates, \
-                    "assignments" : self.assignments
-=======
-                    "duedates" : self.duedates,\
                     "assignments" : self.assignments 
->>>>>>> d01ce84f699da65673a1ecd6cffa3f437ea6048a
                 }
 
 '''

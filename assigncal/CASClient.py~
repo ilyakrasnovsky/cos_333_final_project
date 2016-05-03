@@ -14,7 +14,6 @@ class CASClient:
          '?ticket=' + urllib.quote(ticket) + \
          '&service=' + urllib.quote(self.service_url)
       r = urllib.urlopen(val_url).readlines()   # returns 2 lines
-      print (val_url)
       if len(r) == 2 and re.match("yes", r[0]) != None:
          return r[1].strip()
       return None

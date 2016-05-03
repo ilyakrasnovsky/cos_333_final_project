@@ -1,3 +1,4 @@
+
 # COS 333 Final Project
 
 ## Functionality (TBD)
@@ -161,8 +162,14 @@ for SECRET_KEY and FIREBASE_KEY.
 4. Go to our Heroku app dashboard, click on "Deploy", scroll down to "Manual Deploy", make sure `dev` is selected, and click "Deploy Branch".
 
 5. If the build succeeded, you will see an update in the "Activity" Tab on our dashboard, and your changes should be updated at assign-cals-cos333.herokuapp.com/
-=======
+
 Development branch, latest stable releases here
 
 Stack:
 HTML/CSS/Jquery <--> Django <--> Python <--> Firebase
+=======
+
+# `dev-calAPI` branch
+
+development of Google Calendar API functionality
+

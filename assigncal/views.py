@@ -4,6 +4,10 @@ module : views
 handles HTTP requets and renders views
 '''
 
+from __future__ import print_function
+import httplib2
+import os
+
 #Django based dependencies
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
@@ -14,11 +18,22 @@ from django.conf import settings
 import backend
 import CASClient
 import re
+import os
+
+# oauth2client
+from apiclient import discovery
+import oauth2client
+from oauth2client import client
+from oauth2client import tools
+
+import datetime
+from apiclient import errors
+import argparse
 
 #Model data structures
 from assigncal.models import Student, Course
 
-#Selenium
+# Selenium
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -143,7 +158,7 @@ def makeFreeList(starttime, endtime):
 #save free time blocks to users freelist
 @ensure_csrf_cookie
 def save(request):
-    if (request.method == 'POST'):
+    if (request.method == "POST"):
         Sdict = {"freedict" : makeFreeList(request.POST.dict()['starttime'],
                               request.POST.dict()['endtime'])
                 }
@@ -226,6 +241,7 @@ def makeEventsFromCourse(coursename):
         if (student.has_key('freedict')):
             freedict = student['freedict']
             for free in freedict.keys():
+		print(free)
                 if (globalFrees.has_key(free)):
                     globalFrees[free].append(student['netid']) #= globalFrees[free] + 1
                 else:
@@ -308,11 +324,24 @@ def courses(request):
     else:
         raise Http404('')
 
+# set session variable for email, return OK response
+def email(request):
+    if (request.method == "POST"):
+        request.session['email'] = request.POST.dict()['email']
+        print(request.session.get('email'))
+        return HttpResponse("OK")
+    elif (request.method == "GET"):
+        emailvar = {'email': request.session.get('email')}
+        return JsonResponse(emailvar)
+    else:
+        raise Http404('')
+
+
 #fetches events from either user or course based on session
 #variable from firebase, gives JSON response of the events
 #to client side
 def eventfeed(request):
-    #print ("in eventfeed and session course is " + str(request.session.get('course')))
+    print ("in eventfeed and session course is " + str(request.session.get('course')))
     if (request.session.get('course') == "myFrees"):
         events = makeEventsFromNetid(request.session.get('netid'))
     else:
@@ -341,7 +370,8 @@ def gotoBB(request):
     #Get ticket
     if (request.GET.dict().has_key('ticket') == False):
         raise Http404('')
-    ticket = request.GET.dict()['ticket']    
+    ticket = request.GET.dict()['ticket'] 
+    print(ticket)  
     
     #Validate ticket, get netid from it
     C = CASClient.CASClient(SITE_URL)
@@ -355,10 +385,8 @@ def gotoBB(request):
     
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
-    
 
     driver = webdriver.Firefox()
-
     driver.get("https://blackboard.princeton.edu")
     driver.find_element_by_xpath("//div[@title='I have a valid Princeton NetID and Password']").click()
     user = driver.find_element_by_id("username")
@@ -397,7 +425,10 @@ def gotoBB(request):
         course = course.split('>')[1]
         course = course.split('<')[0]
         regex = course[:6]
-        course_list[regex] = regex
+        if (len(regex) == 6):
+            course_list[regex] = regex
+        #regex = re.findall(".*?_",course)[0]
+        #print(regex)
 
     # scrape assignments
     #regexp4 = re.compile("\"/webapps.*?\"")
@@ -442,23 +473,24 @@ def gotoBB(request):
             
 
     driver.close()
-    
-    '''
+
     #Automated scraping and browsing of blackboard called here
     #After scraping
-    courses = { "MAE 342" : "MAE342",
-                "COS 333" : "COS333",
-                "MAE 426" : "MAE426",
-                "CLA 255" : "CLA255",
-                "COS 217" : "COS217"}
-    '''
+    # courses = { "MAE 342" : "MAE342",
+    #             "COS 333" : "COS333",
+    #             "MAE 426" : "MAE426",
+    #             "CLA 255" : "CLA255",
+    #             "COS 217" : "COS217",
+    #             "test" : "test"}
+    
+    course_list['Email'] = 'Email'
     request.session['courses'] = course_list
-    request.session['course'] = None
-
+    print(course_list)
+    request.session['course'] = 'myFrees'
     #iterate over newly scraped courses
-    for i in request.session.get['courses'].values():
+    for i in request.session.get('courses').values():
         #if not in db, add it to db
-        newCourse = Course(i,[request.session.get('netid')],"2016-01-13T12:30:00")
+        newCourse = Course(i,[request.session.get('netid')],"2016-01-13T12:30:00", assignment_list)
         added = backend.addCourse(newCourse.dictify())
         #if in db, add student's netid to course
         if (added == False):
@@ -466,4 +498,162 @@ def gotoBB(request):
             if (request.session.get('netid') not in existCourse['students']):
                 existCourse['students'].append(request.session.get('netid'))
                 backend.updateCourse(i, existCourse)
+    return HttpResponseRedirect("/cal")
+
+
+
+# If modifying these scopes, delete your previously saved credentials
+# at ~/.credentials/calendar-python-webapp.json
+SCOPES = ['https://www.googleapis.com/auth/calendar',  
+          'https://www.googleapis.com/auth/drive',
+          'https://www.googleapis.com/auth/gmail.compose',
+        'https://www.googleapis.com/auth/gmail.send']
+#SCOPES = 'https://www.googleapis.com/auth/admin.directory.resource.calendar'
+CLIENT_SECRET_FILE = 'client_secret.json'
+APPLICATION_NAME = 'Google Calendar API Python WebApp'
+
+def get_credentials():
+    """Gets valid user credentials from storage.
+    If nothing has been stored, or if the stored credentials are invalid,
+    the OAuth2 flow is completed to obtain the new credentials.
+    Returns:
+        Credentials, the obtained credential.
+    """
+    home_dir = os.path.expanduser('~')
+    credential_dir = os.path.join(home_dir, '.credentials')
+    if not os.path.exists(credential_dir):
+        os.makedirs(credential_dir)
+    credential_path = os.path.join(credential_dir,
+                                   'calendar-python-webapp.json')
+
+    store = oauth2client.file.Storage(credential_path)
+    credentials = store.get()
+    flags = None
+    if not credentials or credentials.invalid:
+        flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, ' '.join(SCOPES))
+        flow.user_agent = APPLICATION_NAME
+        if flags:
+            credentials = tools.run_flow(flow, store, flags)
+        else: # Needed only for compatibility with Python 2.6
+            credentials = tools.run_flow(flow, store)
+        print('Storing credentials to ' + credential_path)
+    return credentials
+
+
+def add_event(calname,title,location, descr, start, end):
+    event = None
+    calendar = get_calendar(calname)
+    if (calendar != None):
+        new_event = {
+              'summary': title,
+              'location': location,
+              'description': descr,
+              'start': {
+                'dateTime': start,
+                'timeZone': 'America/New_York',
+              },
+              'end': {
+                'dateTime': end,
+                'timeZone': 'America/New_York',
+              },
+              #'recurrence': [
+              #  'RRULE:FREQ=DAILY;COUNT=2'
+              #],
+              'attendees': [
+                {'email': 'ghong@princeton.edu'},
+              ],
+              'reminders': {
+                'useDefault': False,
+                'overrides': [
+                  {'method': 'email', 'minutes': 24 * 60},
+                  {'method': 'popup', 'minutes': 10},
+                ],
+              },
+            }
+        add_event_req = service.events().insert(sendNotifications=True, calendarId=calendar['id'], body=new_event)
+        event = add_event_req.execute()
+    return event
+
+
+def sendemail(request):
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('calendar', 'v3', http=http)
+
+
+    #HTTP request for a list of the user's calendars
+    usr_cals_req = service.calendarList().list()
+    
+    #Execute the request, returns data in an object we call usr_cals
+    usr_cals = usr_cals_req.execute()
+
+    createnew = True
+    #If user does not already have assignment calendar we make one:
+    for i in usr_cals['items']:
+       if i['summary'] == 'AssignCal':
+            createnew = False
+            calid = i['id']
+
+    if createnew:
+        new_cal = {
+        "kind": "calendar#calendar", # Type of the resource ("calendar#calendar").
+        "description": "This is the calendar to keep track of study session times", # Description of the calendar. Optional.
+        "summary": "AssignCal", # Title of the calendar.
+        #"etag": "A String", # ETag of the resource.
+        "timeZone": "America/New_York", # The time zone of the calendar. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional.
+         # Identifier of the calendar. To retrieve IDs call the calendarList.list() method.
+            }
+        new_cal_req = service.calendars().insert(body=new_cal)
+        new_created_cal = new_cal_req.execute()
+
+    new_event = {
+        'summary': 'COS 333 TEST EVENT',
+        'location': 'Princeton University, Princeton, NJ, 08544',
+        'description': 'Let\'s collaborate on this PSET!',
+        'start': {
+            # 'dateTime': '2016-07-07T09:00:00-00:00',
+            'dateTime': request.POST.dict()['starttime'],
+            'timeZone': 'America/New_York',
+          },
+        'end': {
+            'dateTime': request.POST.dict()['endtime'],
+            # 'dateTime': '2016-07-07T17:00:00-05:00',
+            'timeZone': 'America/New_York',
+          },
+          #'recurrence': [
+          #  'RRULE:FREQ=DAILY;COUNT=2'
+          #],
+          'attendees': [
+            {'email': 'ghong@princeton.edu'},
+            {'email': 'striketheghong@gmail.com'}
+          ],
+        #'reminders': {
+        #    'useDefault': False,
+        #    'overrides': [
+        #      {'method': 'email', 'minutes': 24 * 60},
+        #      {'method': 'email', 'minutes': 10},
+         #   ],
+         # },
+        }
+
+    #Extract a particular calendar id by name
+    calid = None
+    calname = 'AssignCal'
+
+    for i in usr_cals['items']:
+        if (i['summary'] == calname):
+            calid = i['id']
+            print(calid)
+            break
+    
+    #Use the extracted id to get the calender object via the get() request
+    if (calid != None):
+        #Add new event request
+        print("INHERE")
+        add_event_req = service.events().insert(calendarId=calid, body=new_event, sendNotifications=True)
+        add_event_req.execute()
+    else:
+        print ("Calendar with name : " + calname + " not found!")
+
+
     return HttpResponseRedirect("/cal")
