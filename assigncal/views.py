@@ -362,7 +362,7 @@ def gotoBB(request):
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
 
-    driver = webdriver.Chrome()
+    driver = webdriver.Firefox()
     driver.get("https://blackboard.princeton.edu")
     driver.find_element_by_xpath("//div[@title='I have a valid Princeton NetID and Password']").click()
     user = driver.find_element_by_id("username")
@@ -417,7 +417,7 @@ def gotoBB(request):
         driver.get(url)
 
         # click on "Assignments"
-        driver.find_element_by_link_text("Assignments").click()
+        WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_link_text("Assignments")).click()
 
         # find assignments
         regexp1 = re.compile("contentListItem.*?</div>", flags=re.DOTALL)
