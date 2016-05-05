@@ -400,6 +400,7 @@ def gotoBB(request):
         course = course.split('>')[1]
         course = course.split('<')[0]
         regex = course[:6]
+        regex = regex.replace('-', '_')
         if (len(regex) == 6):
             course_list[regex] = regex
         #regex = re.findall(".*?_",course)[0]
@@ -452,14 +453,12 @@ def gotoBB(request):
 
     #Automated scraping and browsing of blackboard called here
     #After scraping
-    # courses = { "MAE 342" : "MAE342",
-    #             "COS 333" : "COS333",
+    # courses = { "COS 424" : "COS424",
+    #             "EGR 333" : "COS333",
     #             "MAE 426" : "MAE426",
     #             "CLA 255" : "CLA255",
-    #             "COS 217" : "COS217",
-    #             "test" : "test"}
-    
-    course_list['Email'] = 'Email'
+    #             "COS 217" : "COS217"}
+
     #request.session['courses'] = course_list
     print(course_list)
     request.session['courses'] = course_list
@@ -582,8 +581,15 @@ def sendemail(request):
         new_cal_req = service.calendars().insert(body=new_cal)
         new_created_cal = new_cal_req.execute()
 
+    freeStudents = []
+    for i in fetchFreeStudents(request, request.POST.dict()['starttime'], request.POST.dict()['endtime']):
+        free = {}
+        free['email'] = i
+        freeStudents.append(free)
+    print(freeStudents)
+
     new_event = {
-        'summary': 'COS 333 TEST EVENT',
+        'summary': request.session.get('course') + ' Problem Set Session',
         'location': 'Princeton University, Princeton, NJ, 08544',
         'description': 'Let\'s collaborate on this PSET!',
         'start': {
@@ -599,10 +605,8 @@ def sendemail(request):
           #'recurrence': [
           #  'RRULE:FREQ=DAILY;COUNT=2'
           #],
-          'attendees': [
-            {'email': 'amalleo@princeton.edu'},
-            {'email': 'striketheghong@gmail.com'}
-          ],
+          #'attendees': freeStudents,
+          'attendees': [{'email': 'striketheghong@gmail.com'}],
         #'reminders': {
         #    'useDefault': False,
         #    'overrides': [
@@ -633,3 +637,19 @@ def sendemail(request):
 
 
     return HttpResponseRedirect("/cal")
+
+# find free students
+def fetchFreeStudents(request, starttime, endtime):
+    course = request.session.get('course')
+    allStudents = backend.getCourse(course)['students']
+    availableStudents = []
+    for i in allStudents:
+        if backend.getStudent(i).has_key('freedict'):
+            if backend.getStudent(i)['freedict'].has_key(starttime):
+                availableStudents.append(str(i) + "@princeton.edu")
+    print(availableStudents)
+
+    return availableStudents
+        
+
+
