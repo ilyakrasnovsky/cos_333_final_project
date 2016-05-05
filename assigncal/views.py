@@ -362,7 +362,7 @@ def gotoBB(request):
     #Add dictified Student object to firebase
     backend.addStudent(Sobject.dictify())
 
-    driver = webdriver.Firefox()
+    driver = webdriver.Chrome()
     driver.get("https://blackboard.princeton.edu")
     driver.find_element_by_xpath("//div[@title='I have a valid Princeton NetID and Password']").click()
     user = driver.find_element_by_id("username")
