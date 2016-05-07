@@ -179,11 +179,28 @@
 		// test button for email function
 		var Email = document.getElementById("Email");
 		Email.onclick = function() {
-			console.log("clicked");
+			//console.log("clicked");
 			$.ajax({
 				url: '/email',
 				method: 'POST',
 				data: {'email': 'send'}
+			});
+		}
+	}
+</script>
+<script type="text/javascript">
+	function addClass () {
+		var input = document.getElementById("input").value;
+		if (input.length > 6)
+		{
+			alert("Course name must be <= 6 characters");	
+		}
+		else
+		{
+			$.ajax({
+				url: '/addClass',
+				method: 'POST',
+				data: {'input': input}
 			});
 		}
 	}
@@ -205,14 +222,10 @@
 	</div>
 	<div class="color_code">
 		<ul class="color_list">
-			<li class="class_list" style="border-top: 1px solid #ECECEA;"><a>Smart Nick</a></li>
+			<input id="input" value="Type and Click to Add Class">
+			<li id="addClass" class="class_list" style="border-top: 1px solid #ECECEA;"><a type="button" onclick="addClass()">Click To Add</a></li>
 			<li id="Email" class="class_list" href="#"><a>Email</a></li>
 			<li id="myFrees" class="class_list" href="#" ><a>My Frees</a></li>
-			<!--<li class="color_list" style="background-color: green; border-top: 1px solid #ECECEA;">4+
- people</li>
-			<li class="color_list" style="background-color: yellow;">3 people</li>
-			<li class="color_list" style="background-color: orange;">2 people</li>
-			<li class="color_list" style="background-color: red;">1 person</li>-->
 		</ul>
 	</div>
 </body>

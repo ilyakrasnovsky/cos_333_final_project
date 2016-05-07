@@ -42,7 +42,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 def cal(request):
     if (request.session.get('netid') == None):
         raise Http404('')
+    #print ("IN CAL and request.session.get('addClass') is : " + str(request.session.get('addClass')))
+    if (request.session.has_key('addClass')):
+        if (request.session.get('addClass')):
+            request.session['courses'][request.session.get('addedClass')] = request.session.get('addedClass')
+            request.session['addClass'] = False
     context = {"courses" : request.session.get('courses')}
+    print ("IN cal and context is : " + str(context))
     return render(request, 'assigncal/cal.html', context)
 
 #Get the next date as a (year, month, day) tuple
@@ -463,16 +469,15 @@ def gotoBB(request):
     request.session['course'] = 'myFrees'
     #iterate over newly scraped courses
     for i in request.session.get('courses').values():
-        if (i != "Email"):
-            #if not in db, add it to db
-            newCourse = Course(i,[request.session.get('netid')],"2016-01-13T12:30:00")
-            added = backend.addCourse(newCourse.dictify())
-            #if in db, add student's netid to course
-            if (added == False):
-                existCourse = backend.getCourse(i)
-                if (request.session.get('netid') not in existCourse['students']):
-                    existCourse['students'].append(request.session.get('netid'))
-                    backend.updateCourse(i, existCourse)
+        #if not in db, add it to db
+        newCourse = Course(i,[request.session.get('netid')],"2016-01-13T12:30:00")
+        added = backend.addCourse(newCourse.dictify())
+        #if in db, add student's netid to course
+        if (added == False):
+            existCourse = backend.getCourse(i)
+            if (request.session.get('netid') not in existCourse['students']):
+                existCourse['students'].append(request.session.get('netid'))
+                backend.updateCourse(i, existCourse)
     return HttpResponseRedirect("/cal")
 
 
@@ -629,4 +634,23 @@ def sendemail(request):
         print ("Calendar with name : " + calname + " not found!")
 
 
+    return HttpResponseRedirect("/cal")
+
+#View function that receives name of course from input bar
+#on front end, checks if that course is in firebase.
+#If it is, enrolls current student in that course. If it is
+#not, creates that course in firebase, and enrolls that student.
+def addClass(request):
+    inputClass = request.POST.dict()['input']
+    #Check if in firebase
+    foundClass = backend.getCourse(inputClass)
+    if (foundClass == None):
+        newCourse = Course(inputClass,[request.session.get('netid')],"2016-01-13T12:30:00")
+        backend.addCourse(newCourse.dictify())
+        #addClass mode is true when passed to /cal
+        request.session['addClass'] = True
+        request.session['addedClass'] = inputClass
+    else:
+        pass
+    #print ("In addClass and course found in firebase : " + str(foundClass))
     return HttpResponseRedirect("/cal")

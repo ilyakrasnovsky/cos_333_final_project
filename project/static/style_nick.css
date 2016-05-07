@@ -20,7 +20,7 @@ body {
 /*Capsule class to contain the calendar div to allow it to be 
 centerd between the fixes classes sidebar and the color code sidebar*/
 .capsule {
-	width: calc(100% - 350px);
+	width: calc(100% - 400px);
 
 	/*Position elements*/
 	position: relative;
@@ -47,7 +47,7 @@ centerd between the fixes classes sidebar and the color code sidebar*/
 
 .color_code {
 	background-color: #558C89;
-	width: 150px;
+	width: 200px;
 	height: 100%;
 
 	/*Specify position elements*/
@@ -58,7 +58,7 @@ centerd between the fixes classes sidebar and the color code sidebar*/
 
 ul.color_list {	
 	/*Box model CSS properties*/
-	width: 150px;
+	width: 200px;
 	height: 500px;
 	margin: 0px;
     padding: 0px;
