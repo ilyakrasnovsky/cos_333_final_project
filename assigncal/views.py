@@ -651,6 +651,7 @@ def addClass(request):
         request.session['addClass'] = True
         request.session['addedClass'] = inputClass
     else:
-        pass
-    #print ("In addClass and course found in firebase : " + str(foundClass))
+        if (request.session.get('netid') not in foundClass['students']):
+            foundClass['students'].append(request.session.get('netid'))
+            backend.updateCourse(foundClass['name'], foundClass)
     return HttpResponseRedirect("/cal")
