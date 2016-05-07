@@ -456,8 +456,7 @@ def gotoBB(request):
     courses = { "ANT 204" : "ANT204",
              "COS 333" : "COS333",
              "COS 340" : "COS340",
-             "ENG 402" : "ENG402",
-             "Email Students" : "Email"}
+             "ENG 402" : "ENG402"}
     
     #course_list['Email'] = 'Email'
     request.session['courses'] = courses
@@ -535,7 +534,7 @@ def add_event(calname,title,location, descr, start, end):
               #  'RRULE:FREQ=DAILY;COUNT=2'
               #],
               'attendees': [
-                {'email': 'ghong@princeton.edu'},
+                {'email': 'ilyak@princeton.edu'},
               ],
               'reminders': {
                 'useDefault': False,
@@ -599,8 +598,7 @@ def sendemail(request):
           #  'RRULE:FREQ=DAILY;COUNT=2'
           #],
           'attendees': [
-            {'email': 'ghong@princeton.edu'},
-            {'email': 'striketheghong@gmail.com'}
+            {'email': 'ilyak@princeton.edu'}
           ],
         #'reminders': {
         #    'useDefault': False,

@@ -12,7 +12,7 @@ body {
 
 
 #calendar {
-	max-width: 900px;
+	max-width: 850px;
 	min-width: 600px;
 	margin: 0 auto;
 }
@@ -20,12 +20,12 @@ body {
 /*Capsule class to contain the calendar div to allow it to be 
 centerd between the fixes classes sidebar and the color code sidebar*/
 .capsule {
-	width: calc(100% - 310px);
+	width: calc(100% - 350px);
 
 	/*Position elements*/
 	position: relative;
 	top: 0px;
-	left:210px;
+	left:200px;
 }
 
 .fc-today{
@@ -46,32 +46,35 @@ centerd between the fixes classes sidebar and the color code sidebar*/
 }
 
 .color_code {
-	width: 100px;
+	background-color: #558C89;
+	width: 150px;
+	height: 100%;
 
 	/*Specify position elements*/
 	position: fixed; 	
-	top: 150px;
+	top: 0px;
 	right: 0;
 }
 
 ul.color_list {	
 	/*Box model CSS properties*/
-	width: 100px;
+	width: 150px;
+	height: 500px;
 	margin: 0px;
-    	padding: 0px;
+    padding: 0px;
 	border: 0px solid navy;
     
 	/*Text style*/
-    	list-style-type: none;
-    	text-align: center;
+    list-style-type: none;
+    text-align: center;
 	
 	/*Position elements*/
 	position: relative;
-	top: 0px;
+	top: 150px;
 }
 
 li.color_list {
-    	display: block;	
+    display: block;	
 	border-bottom: 1px solid #ECECEA;	
 	
 	/*Position elements*/
@@ -93,7 +96,7 @@ li.color_list {
 	width: 200px;
 	height: 150px;	
 	margin: 0px;
-    	padding: 0px;
+    padding: 0px;
 	border-bottom: 1px solid #ECECEA;
 	
 	/*Text style*/
