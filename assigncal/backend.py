@@ -17,34 +17,6 @@ fdb = firebase.FirebaseApplication(FIREBASE_URL, authentication=authentication)
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
         'cas.backends.CASBackend',)
 
-#Add to db
-def add_to_db(stuff):
-    fdb.post('/text/%s' % stuff['name'], stuff)
-    '''
-    isPresent = get_from_db(stuff)
-    if (isPresent == None):
-        try:
-            fdb.post('/text/', stuff)
-            #print ("Add successful")
-            return True
-        except HTTPError:
-            #print ("Add unsuccessful : access denied")
-            return False
-    else:
-        #print ("Add unsuccessful : already present")
-        return False
-    '''
-#Get from db
-def get_from_db(name):
-    retrieved = fdb.get('/text', name)
-    if (retrieved == None):
-        #print ("Not found")
-        return None
-    else:
-        #print ("found : " + str(retrieved.values()[0])) 
-        return retrieved.values()
-
-
 #Add Student  information to the database by
 #dict. #Returns True if worked, False if name 
 #collision, and "ERROR" if connection issue ()

@@ -11,6 +11,7 @@
 <script src='../../static/fullcalendar.min.js'></script>
 <script src='../../static/csrfcookie.js'></script>
 <script>
+	//Modified functions in FullCalendar API demo code
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
 			theme: true,
@@ -130,18 +131,6 @@
 				  		$('#calendar').fullCalendar('refetchEvents');
 					});
 				}
-				/*
-				var title = prompt('Event Title:');
-				var eventData;
-				if (title) {
-					eventData = {
-						title: title,
-						start: start,
-						end: end
-					};
-					$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-				}
-				*/
 				$('#calendar').fullCalendar('unselect');
 			}
 		});		
@@ -149,6 +138,7 @@
 </script>
 
 <script type="text/javascript">
+	//All button handlers
 	window.onload = function() {
 		{% for key,value in courses.items %}
 			var {{ value }} = document.getElementById("{{ value }}");
@@ -189,16 +179,51 @@
 	}
 </script>
 <script type="text/javascript">
+	//Functionality behind add and remove class buttons
 	function addClass () {
 		var input = document.getElementById("input").value;
-		if (input.length > 6)
+		var numCourses = 1;
+		//Query number of session courses on server
+		$.ajax({
+				url: '/numCourses',
+				method: 'GET'
+			}).done(function(data){
+				numCourses = data.numCourses;
+				console.log("numCourses is : " + numCourses);
+			});
+		if (numCourses > 4)
 		{
-			alert("Course name must be <= 6 characters");	
+			alert("Cannot add more than 5 courses at a time");
+		}
+		else
+		{
+			if (input.length != 6)
+			{
+				alert("Course name must be 6 characters");	
+			}
+			else
+			{
+				$.ajax({
+					url: '/addClass',
+					method: 'POST',
+					data: {'input': input}
+				}).done(function(){
+					location.reload();
+				});
+			}	
+		}
+	}
+
+	function remClass () {
+		var input = document.getElementById("input").value;
+		if (input.length != 6)
+		{
+			alert("Course name must be 6 characters");	
 		}
 		else
 		{
 			$.ajax({
-				url: '/addClass',
+				url: '/remClass',
 				method: 'POST',
 				data: {'input': input}
 			}).done(function(){
@@ -226,6 +251,7 @@
 		<ul class="color_list">
 			<input id="input" value="Type and Click to Add Class">
 			<li id="addClass" class="class_list" style="border-top: 1px solid #ECECEA;"><a type="button" onclick="addClass()">Click To Add</a></li>
+			<li id="remClass" class="class_list" href="#"><a type="button" onclick="remClass()">Click to Remove</a></li>
 			<li id="Email" class="class_list" href="#"><a>Email</a></li>
 			<li id="myFrees" class="class_list" href="#" ><a>My Frees</a></li>
 		</ul>

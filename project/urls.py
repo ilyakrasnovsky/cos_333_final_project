@@ -19,6 +19,8 @@ urlpatterns = [
     url(r'^email', views.email, name='email'),
     url(r'^sendemail', views.sendemail, name='sendemail'),
     url(r'^addClass', views.addClass, name='addClass'),
+    url(r'^remClass', views.remClass, name='remClass'),
+    url(r'^numCourses', views.numCourses, name='numCourses'),
     #<> --> named group
     #url(r'^item/(?P<id>\d+)/', views.item_detail, name = 'item_detail'),
     #url(r'^entry/', views.entry, name = 'entry'),

@@ -38,15 +38,12 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
+#Basic view for calendar, renders template from existing
+#django session variables
 @ensure_csrf_cookie
 def cal(request):
     if (request.session.get('netid') == None):
         raise Http404('')
-    #print ("IN CAL and request.session.get('addClass') is : " + str(request.session.get('addClass')))
-    if (request.session.has_key('addClass')):
-        if (request.session.get('addClass')):
-            request.session['courses'][request.session.get('addedClass')] = request.session.get('addedClass')
-            request.session['addClass'] = False
     context = {"courses" : request.session.get('courses')}
     print ("IN cal and context is : " + str(context))
     return render(request, 'assigncal/cal.html', context)
@@ -459,10 +456,10 @@ def gotoBB(request):
 
     #Automated scraping and browsing of blackboard called here
     #After scraping
-    courses = { "ANT 204" : "ANT204",
-             "COS 333" : "COS333",
-             "COS 340" : "COS340",
-             "ENG 402" : "ENG402"}
+    courses = { "ANT204" : "ANT204",
+             "COS333" : "COS333",
+             "COS340" : "COS340",
+             "ENG402" : "ENG402"}
     
     #course_list['Email'] = 'Email'
     request.session['courses'] = courses
@@ -647,11 +644,37 @@ def addClass(request):
     if (foundClass == None):
         newCourse = Course(inputClass,[request.session.get('netid')],"2016-01-13T12:30:00")
         backend.addCourse(newCourse.dictify())
-        #addClass mode is true when passed to /cal
-        request.session['addClass'] = True
-        request.session['addedClass'] = inputClass
     else:
         if (request.session.get('netid') not in foundClass['students']):
             foundClass['students'].append(request.session.get('netid'))
             backend.updateCourse(foundClass['name'], foundClass)
+    if (inputClass not in request.session['courses']):
+        request.session['courses'][inputClass] = inputClass
+    request.session.modified = True
     return HttpResponseRedirect("/cal")
+
+#View function that receives name of course from input bar
+#on front end, and unenrolls current student from that course, if they
+#are in that course and that course exists. If this was the last student
+#enrolled in this class, the class is removed from the database.
+def remClass(request):
+    inputClass = request.POST.dict()['input']
+    #Check if in firebase
+    foundClass = backend.getCourse(inputClass)
+    if (foundClass != None):
+        if (request.session.get('netid') in foundClass['students']):
+            foundClass['students'].remove(request.session.get('netid'))
+            if (len(foundClass['students']) < 1):
+                backend.updateCourse(foundClass['name'], None)
+            else:    
+                backend.updateCourse(foundClass['name'], foundClass)
+            if (inputClass in request.session['courses']):
+                del request.session['courses'][inputClass]
+    request.session.modified = True
+    return HttpResponseRedirect("/cal")
+
+#View function that returns the number of courses in the
+#current session to a query from the front end
+def numCourses(request):
+    context = {'numCourses' : len(request.session.get('courses'))}
+    return JsonResponse(context)
