@@ -241,7 +241,6 @@ def makeEventsFromCourse(coursename):
         if (student.has_key('freedict')):
             freedict = student['freedict']
             for free in freedict.keys():
-		print(free)
                 if (globalFrees.has_key(free)):
                     globalFrees[free].append(student['netid']) #= globalFrees[free] + 1
                 else:
@@ -249,6 +248,7 @@ def makeEventsFromCourse(coursename):
     #Translate the globalFrees dictionary into a list of events
     useddates = []
     for free in globalFrees.keys():
+
         (date, clock) = (free.split('T')[0],
                     free.split('T')[1])
         (year, month, day) = (int(date.split('-')[0]),
@@ -272,20 +272,20 @@ def makeEventsFromCourse(coursename):
                     "rendering" : "background"
                 })
             #get names in the list for "See Names"
-            if (len(globalFrees[free]) <= 1):
-                events.append({
-                        "title": str(len(globalFrees[free])) + " people",
-                        "start": date,
-                        "color" : colorCode(len(globalFrees[free]))
+            #if (len(globalFrees[free]) <= 1):
+            #    events.append({
+            #            "title": str(len(globalFrees[free])) + " people",
+            #            "start": date,
+            #            "color" : colorCode(len(globalFrees[free]))
                         #"id" : 9999
-                })
-            for netid in globalFrees[free]:
-                events.append({
-                        "title" : netid,
-                        "start" : date,
-                        "textcolor" : "white",
-                        "color" : colorCode(len(globalFrees[free]))
-                    })
+            #    })
+            #for netid in globalFrees[free]:
+            #    events.append({
+            #            "title" : netid,
+            #            "start" : date,
+            #            "textcolor" : "white",
+            #            "color" : colorCode(len(globalFrees[free]))
+            #        })
             useddates.append(date)
         events.append({
                 "title" : "lol",
@@ -294,6 +294,20 @@ def makeEventsFromCourse(coursename):
                 "color" : colorCode(len(globalFrees[free])),
                 "rendering" : "background"
             })
+        if (len(globalFrees[free]) <= 1):
+                    events.append({
+                        "title": str(len(globalFrees[free])) + " people",
+                        "start": date,
+                        "color" : colorCode(len(globalFrees[free]))
+                        #"id" : 9999
+                })
+        for netid in globalFrees[free]:
+            events.append({
+                        "title" : netid,
+                        "start" : date,
+                        "textcolor" : "white",
+                        "color" : colorCode(len(globalFrees[free]))
+                    })
     return events
 
 #Return color code for free time event based on number of 
