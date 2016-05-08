@@ -605,8 +605,7 @@ def sendemail(request):
           #'recurrence': [
           #  'RRULE:FREQ=DAILY;COUNT=2'
           #],
-          #'attendees': freeStudents,
-          'attendees': [{'email': 'striketheghong@gmail.com'}],
+          'attendees': freeStudents,
         #'reminders': {
         #    'useDefault': False,
         #    'overrides': [
@@ -645,7 +644,7 @@ def fetchFreeStudents(request, starttime, endtime):
     availableStudents = []
     for i in allStudents:
         if backend.getStudent(i).has_key('freedict'):
-            if backend.getStudent(i)['freedict'].has_key(starttime):
+            if backend.getStudent(i)['freedict'].has_key(starttime) or backend.getStudent(i)['freedict'].has_key(endtime):
                 availableStudents.append(str(i) + "@princeton.edu")
     print(availableStudents)
 
