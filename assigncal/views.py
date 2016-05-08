@@ -259,54 +259,70 @@ def makeEventsFromCourse(coursename):
         (year, month, day, hour, minute) = nextClock(year, month, day, hour, minute)
         nextfree = "%04d-%02d-%02dT%02d:%02d:00" % \
                 (year, month, day, hour, minute)
-        if (date not in useddates):
-            events.append({
-                    "title" : str(len(globalFrees[free])) + " people",
-                    "start" : date,
-                    "color" : colorCode(len(globalFrees[free])),
-                })
-            events.append({
-                    "title" : str(len(globalFrees[free])) + " people",
-                    "start" : date,
-                    "color" : colorCode(len(globalFrees[free])),
-                    "rendering" : "background"
-                })
-            #get names in the list for "See Names"
-            #if (len(globalFrees[free]) <= 1):
-            #    events.append({
-            #            "title": str(len(globalFrees[free])) + " people",
-            #            "start": date,
-            #            "color" : colorCode(len(globalFrees[free]))
-                        #"id" : 9999
-            #    })
-            #for netid in globalFrees[free]:
-            #    events.append({
-            #            "title" : netid,
-            #            "start" : date,
-            #            "textcolor" : "white",
-            #            "color" : colorCode(len(globalFrees[free]))
-            #        })
-            useddates.append(date)
+
+        #gather the people working in the time slot
+        netids = []
+        for netid in globalFrees[free]:
+            netids.append(netid)
+        
+        #new information for the date
+        #Only save the max to 
+        #make sure time block with greatest number of people shows up
+        newdate = True
+        if (useddates != []):
+            for d in useddates:
+                if (date == d[0]):
+                    newdate = False
+        else:
+            useddates.append([date, len(globalFrees[free]), netids])
+        
+        if newdate:
+            useddates.append([date, len(globalFrees[free]), netids])
+        else:
+            if d[0] == date:
+                maxf = d[1]
+                if len(globalFrees[free]) > maxf:
+                    d[1] = len(globalFrees[free])
+                for n in netids:
+                    if n not in d[2]:
+                        d[2].append(n)
+       
+
+                
+        #hour by hour coloring
         events.append({
                 "title" : "lol",
                 "start" : free,
                 "end" : nextfree,
-                "color" : colorCode(len(globalFrees[free])),
+               "color" : colorCode(len(globalFrees[free])),
                 "rendering" : "background"
             })
-        if (len(globalFrees[free]) <= 1):
-                    events.append({
-                        "title": str(len(globalFrees[free])) + " people",
+    for ud in useddates:
+            events.append({
+                    "title" : str(ud[1]) + " people",
+                    "start" : ud[0],
+                    "color" : colorCode(ud[1]),
+                })
+            events.append({
+                    "title" : str(ud[1]) + " people",
+                    "start" : ud[0],
+                    "color" : colorCode(ud[1]),
+                    "rendering" : "background"
+                })
+            #get names in the list for "See Names"
+            if (ud[1] <= 1):
+                events.append({
+                        "title": str(ud[1]) + " people",
                         "start": date,
-                        "color" : colorCode(len(globalFrees[free]))
+                        "color" : colorCode(ud[1])
                         #"id" : 9999
                 })
-        for netid in globalFrees[free]:
-            events.append({
+            for netid in ud[2]:
+                events.append({
                         "title" : netid,
-                        "start" : date,
+                        "start" : ud[0],
                         "textcolor" : "white",
-                        "color" : colorCode(len(globalFrees[free]))
+                        "color" : colorCode(ud[1])
                     })
     return events
 
