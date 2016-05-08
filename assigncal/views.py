@@ -455,6 +455,7 @@ def gotoBB(request):
         course = course.split('>')[1]
         course = course.split('<')[0]
         regex = course[:6]
+        regex = regex.replace('-','_')
         if (len(regex) == 6):
             course_list[regex] = regex
         #regex = re.findall(".*?_",course)[0]
@@ -472,7 +473,7 @@ def gotoBB(request):
         driver.get(url)
 
         # click on "Assignments"
-        driver.find_element_by_link_text("Assignments").click()
+        WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_link_text("Assignments")).click()
 
         # find assignments
         regexp1 = re.compile("contentListItem.*?</div>", flags=re.DOTALL)
@@ -654,7 +655,7 @@ def sendemail(request):
           #  'RRULE:FREQ=DAILY;COUNT=2'
           #],
           'attendees': [
-            {'email': 'ghong@princeton.edu'},
+            {'email': 'amalleo@princeton.edu'},
             {'email': 'striketheghong@gmail.com'}
           ],
         #'reminders': {
