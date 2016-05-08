@@ -307,13 +307,13 @@ def makeEventsFromCourse(coursename):
                     "rendering" : "background"
                 })
             #get names in the list for "See Names"
-            if (ud[1] <= 1):
-                events.append({
-                        "title": str(ud[1]) + " people",
-                        "start": date,
-                        "color" : colorCode(ud[1])
-                        #"id" : 9999
-                })
+            #if (ud[1] <= 1):
+            #    events.append({
+            #            "title": str(ud[1]) + " person",
+            #            "start": date,
+            #            "color" : colorCode(ud[1])
+            #            #"id" : 9999
+            #    })
             for netid in ud[2]:
                 events.append({
                         "title" : netid,
