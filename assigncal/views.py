@@ -499,9 +499,11 @@ def get_credentials():
     credential_path = os.path.join(credential_dir,
                                    'calendar-python-webapp.json')
     print ("credential_path is : " + str(credential_path))
-    #store = oauth2client.file.Storage(credential_path)
-    store = oauth2client.file.Storage('calendar-python-webapp.json')
+    store = oauth2client.file.Storage(credential_path)
+    #store = oauth2client.file.Storage('calendar-python-webapp.json')
+    print ("store is " + str(store))
     credentials = store.get()
+    print ("credentials are " + str(credentials))
     flags = None
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, ' '.join(SCOPES))
