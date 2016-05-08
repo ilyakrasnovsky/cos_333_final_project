@@ -216,7 +216,7 @@ def main():
     print("---------------------------------")
     m = "This is a test message to test messaging"
     message = CreateMessage("amalleo@princeton.edu", "amalleo@princeton.edu", "test message", m)
-    SendMessage(service,"amalleo@princeton.edu",message)
+    #SendMessage(service,"amalleo@princeton.edu",message)
     #MY CHANGES
     
     '''

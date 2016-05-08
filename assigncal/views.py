@@ -404,6 +404,7 @@ def gotoBB(request):
         course = course.split('>')[1]
         course = course.split('<')[0]
         regex = course[:6]
+        regex = regex.replace('-', '_')
         if (len(regex) == 6):
             course_list[regex] = regex
         #regex = re.findall(".*?_",course)[0]
@@ -421,7 +422,8 @@ def gotoBB(request):
         driver.get(url)
 
         # click on "Assignments"
-        driver.find_element_by_link_text("Assignments").click()
+        WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_link_text("Assignments")).click()
+        # driver.find_element_by_link_text("Assignments").click()
 
         # find assignments
         regexp1 = re.compile("contentListItem.*?</div>", flags=re.DOTALL)
@@ -586,8 +588,15 @@ def sendemail(request):
         new_cal_req = service.calendars().insert(body=new_cal)
         new_created_cal = new_cal_req.execute()
 
+    freeStudents = []
+    for i in fetchFreeStudents(request, request.POST.dict()['starttime'], request.POST.dict()['endtime']):
+        free = {}
+        free['email'] = i
+        freeStudents.append(free)
+    print(freeStudents)
+
     new_event = {
-        'summary': 'COS 333 TEST EVENT',
+        'summary': request.session.get('course') + ' Problem Set Session',
         'location': 'Princeton University, Princeton, NJ, 08544',
         'description': 'Let\'s collaborate on this PSET!',
         'start': {
@@ -603,9 +612,7 @@ def sendemail(request):
           #'recurrence': [
           #  'RRULE:FREQ=DAILY;COUNT=2'
           #],
-          'attendees': [
-            {'email': 'ilyak@princeton.edu'}
-          ],
+          'attendees': freeStudents,
         #'reminders': {
         #    'useDefault': False,
         #    'overrides': [
@@ -682,3 +689,16 @@ def remClass(request):
 def numCourses(request):
     context = {'numCourses' : len(request.session.get('courses'))}
     return JsonResponse(context)
+
+# find free students
+def fetchFreeStudents(request, starttime, endtime):
+    course = request.session.get('course')
+    allStudents = backend.getCourse(course)['students']
+    availableStudents = []
+    for i in allStudents:
+        if backend.getStudent(i).has_key('freedict'):
+            if backend.getStudent(i)['freedict'].has_key(starttime) or backend.getStudent(i)['freedict'].has_key(endtime):
+                availableStudents.append(str(i) + "@princeton.edu")
+    print(availableStudents)
+
+    return availableStudents
