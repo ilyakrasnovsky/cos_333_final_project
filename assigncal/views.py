@@ -498,7 +498,7 @@ def get_credentials():
         os.makedirs(credential_dir)
     credential_path = os.path.join(credential_dir,
                                    'calendar-python-webapp.json')
-
+    print ("credential_path is : " + str(credential_path))
     store = oauth2client.file.Storage(credential_path)
     credentials = store.get()
     flags = None
@@ -511,7 +511,6 @@ def get_credentials():
             credentials = tools.run_flow(flow, store)
         print('Storing credentials to ' + credential_path)
     return credentials
-
 
 def add_event(calname,title,location, descr, start, end):
     event = None
