@@ -456,10 +456,7 @@ def gotoBB(request):
 
     #Automated scraping and browsing of blackboard called here
     #After scraping
-    courses = { "ANT204" : "ANT204",
-             "COS333" : "COS333",
-             "COS340" : "COS340",
-             "ENG402" : "ENG402"}
+    courses = {"COS333" : "COS333"}
     
     #course_list['Email'] = 'Email'
     request.session['courses'] = courses

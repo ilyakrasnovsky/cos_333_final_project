@@ -138,7 +138,7 @@
 </script>
 
 <script type="text/javascript">
-	//All button handlers
+	//Class, email, and myFrees button handlers
 	window.onload = function() {
 		{% for key,value in courses.items %}
 			var {{ value }} = document.getElementById("{{ value }}");
@@ -182,36 +182,35 @@
 	//Functionality behind add and remove class buttons
 	function addClass () {
 		var input = document.getElementById("input").value;
-		var numCourses = 1;
 		//Query number of session courses on server
 		$.ajax({
 				url: '/numCourses',
 				method: 'GET'
 			}).done(function(data){
-				numCourses = data.numCourses;
+				var numCourses = data.numCourses;
 				console.log("numCourses is : " + numCourses);
+				if (numCourses > 4)
+				{
+					alert("Cannot add more than 5 courses at a time");
+				}
+				else
+				{
+					if (input.length != 6)
+					{
+						alert("Course name must be 6 characters");	
+					}
+					else
+					{
+						$.ajax({
+							url: '/addClass',
+							method: 'POST',
+							data: {'input': input}
+						}).done(function(){
+							location.reload();
+						});
+					}	
+				}	
 			});
-		if (numCourses > 4)
-		{
-			alert("Cannot add more than 5 courses at a time");
-		}
-		else
-		{
-			if (input.length != 6)
-			{
-				alert("Course name must be 6 characters");	
-			}
-			else
-			{
-				$.ajax({
-					url: '/addClass',
-					method: 'POST',
-					data: {'input': input}
-				}).done(function(){
-					location.reload();
-				});
-			}	
-		}
 	}
 
 	function remClass () {
