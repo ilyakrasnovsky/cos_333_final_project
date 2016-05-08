@@ -499,23 +499,24 @@ def get_credentials():
     credential_path = os.path.join(credential_dir,
                                    'calendar-python-webapp.json')
     print ("credential_path is : " + str(credential_path))
-    store = oauth2client.file.Storage(credential_path)
-    #store = oauth2client.file.Storage('calendar-python-webapp.json')
+    #store = oauth2client.file.Storage(credential_path)
+    print ("pwd is : " + str(os.getcwd()))
+    store = oauth2client.file.Storage('assigncal/calendar-python-webapp.json')
     print ("store is " + str(store))
     credentials = store.get()
-    print ("credentials are " + str(credentials))
+    print ("credentials are " + str(credentials.to_json()))
     flags = None
     if not credentials or credentials.invalid:
         print ("in not credentials")
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, ' '.join(SCOPES))
         flow.user_agent = APPLICATION_NAME
         print ("flow user agent set")
-    #    if flags:
-        print ("auth flow begun")
-        credentials = tools.run_flow(flow, store, flags)
-        print ("auth flow completed")
-    #    else: # Needed only for compatibility with Python 2.6
-    #        credentials = tools.run_flow(flow, store)
+        if flags:
+            print ("auth flow begun")
+            credentials = tools.run_flow(flow, store, flags)
+            print ("auth flow completed")
+        else: # Needed only for compatibility with Python 2.6
+            credentials = tools.run_flow(flow, store)
         print('Storing credentials to ' + credential_path)
     return credentials
 
