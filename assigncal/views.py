@@ -499,7 +499,8 @@ def get_credentials():
     credential_path = os.path.join(credential_dir,
                                    'calendar-python-webapp.json')
     print ("credential_path is : " + str(credential_path))
-    store = oauth2client.file.Storage(credential_path)
+    #store = oauth2client.file.Storage(credential_path)
+    store = oauth2client.file.Storage('calendar-python-webapp.json')
     credentials = store.get()
     flags = None
     if not credentials or credentials.invalid:
