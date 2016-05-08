@@ -500,26 +500,18 @@ def get_credentials():
         os.makedirs(credential_dir)
     credential_path = os.path.join(credential_dir,
                                    'calendar-python-webapp.json')
-    print ("credential_path is : " + str(credential_path))
     #store = oauth2client.file.Storage(credential_path)
-    print ("pwd is : " + str(os.getcwd()))
     store = oauth2client.file.Storage('assigncal/calendar-python-webapp.json')
-    print ("store is " + str(store))
     credentials = store.get()
-    print ("credentials are " + str(credentials.to_json()))
     flags = None
     if not credentials or credentials.invalid:
-        print ("in not credentials")
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, ' '.join(SCOPES))
         flow.user_agent = APPLICATION_NAME
-        print ("flow user agent set")
         if flags:
-            print ("auth flow begun")
             credentials = tools.run_flow(flow, store, flags)
-            print ("auth flow completed")
         else: # Needed only for compatibility with Python 2.6
             credentials = tools.run_flow(flow, store)
-        print('Storing credentials to ' + credential_path)
+        #print('Storing credentials to ' + credential_path)
     return credentials
 
 def add_event(calname,title,location, descr, start, end):
@@ -649,7 +641,7 @@ def sendemail(request):
 #If it is, enrolls current student in that course. If it is
 #not, creates that course in firebase, and enrolls that student.
 def addClass(request):
-    inputClass = request.POST.dict()['input']
+    inputClass = request.POST.dict()['input'].upper()
     #Check if in firebase
     foundClass = backend.getCourse(inputClass)
     if (foundClass == None):
@@ -669,7 +661,7 @@ def addClass(request):
 #are in that course and that course exists. If this was the last student
 #enrolled in this class, the class is removed from the database.
 def remClass(request):
-    inputClass = request.POST.dict()['input']
+    inputClass = request.POST.dict()['input'].upper()
     #Check if in firebase
     foundClass = backend.getCourse(inputClass)
     if (foundClass != None):
@@ -699,6 +691,67 @@ def fetchFreeStudents(request, starttime, endtime):
         if backend.getStudent(i).has_key('freedict'):
             if backend.getStudent(i)['freedict'].has_key(starttime) or backend.getStudent(i)['freedict'].has_key(endtime):
                 availableStudents.append(str(i) + "@princeton.edu")
-    print(availableStudents)
-
+    #print(availableStudents)
     return availableStudents
+
+#view function that verifies whether an input course name
+#from the front end matches the princeton format, with 
+#available departments
+def validateCourse(request):
+    #dict of valid department names
+    departments = {  "AAS" : "AAS",
+    "AFS" : "AFS", "AMS" : "AMS", "ANT" : "ANT",
+    "AOS" : "AOS", "APC" : "APC", "ARA" : "ARA",
+    "ARC" : "ARC", "ART" : "ART", "AST" : "AST",
+    "ATL" : "ATL", "BCS" : "BCS", "CBE" : "CBE",
+    "CEE" : "CEE", "CGS" : "CGS", "CHI" : "CHI",
+    "CHM" : "CHM", "CHV" : "CHV", "CLA" : "CLA",
+    "CLG" : "CLG", "COM" : "COM", "COS" : "COS",
+    "CWR" : "CWR", "CZE" : "CZE", "DAN" : "DAN",
+    "EAS" : "EAS", "ECO" : "ECO", "ECS" : "ECS",
+    "EEB" : "EEB", "EGR" : "EGR", "ELE" : "ELE",
+    "ENE" : "ENE", "ENG" : "ENG", "ENV" : "ENV",
+    "EPS" : "EPS", "FIN" : "FIN", "FRE" : "FRE",
+    "FRS" : "FRS", "GEO" : "GEO", "GER" : "GER",
+    "GHP" : "GHP", "GLS" : "GLS", "GSS" : "GSS",
+    "HEB" : "HEB", "HIN" : "HIN", "HIS" : "HIS",
+    "HLS" : "HLS", "HOS" : "HOS", "HPD" : "HPD",
+    "HUM" : "HUM", "ISC" : "ISC", "ITA" : "ITA",
+    "JDS" : "JDS", "JPN" : "JPN", "JRN" : "JRN",
+    "KOR" : "KOR", "LAO" : "LAO", "LAS" : "LAS",
+    "LAT" : "LAT", "LIN" : "LIN", "MAE" : "MAE",
+    "MAT" : "MAT", "MED" : "MED", "MOD" : "MOD",
+    "MOG" : "MOG", "MOL" : "MOL", "MSE" : "MSE",
+    "MTD" : "MTD", "MUS" : "MUS", "NES" : "NES",
+    "NEU" : "NEU", "ORF" : "ORF", "PAW" : "PAW",
+    "PER" : "PER", "PHI" : "PHI", "PHY" : "PHY",
+    "PLS" : "PLS", "POL" : "POL", "POP" : "POP",
+    "POR" : "POR", "PSY" : "PSY", "QCB" : "QCB",
+    "REL" : "REL", "RES" : "RES", "RUS" : "RUS",
+    "SAN" : "SAN", "SAS" : "SAS", "SLA" : "SLA",
+    "SML" : "SML", "SOC" : "SOC", "SPA" : "SPA",
+    "STC" : "STC", "SWA" : "SWA", "THR" : "THR",
+    "TPP" : "TPP", "TRA" : "TRA", "TUR" : "TUR",
+    "TWI" : "TWI", "URB" : "URB", "URD" : "URD",
+    "VIS" : "VIS", "WRI" : "WRI", "WWS" : "WWS"}
+    inputClass = request.POST.dict()['input'].upper()
+    context = {"valid" : False}
+    if (len(inputClass) != 6):
+        return JsonResponse(context)
+    if (inputClass[:3] not in departments):
+        return JsonResponse(context)
+    if (not is_integer(inputClass[3:])):
+        return JsonResponse(context)
+    context['valid'] = True
+    return JsonResponse(context)
+
+#Function takes in s, and determines if it
+#is an integer (returns True if yes, False if no)
+def is_integer(s):
+    try:
+        int(s)
+        return (True)
+    except ValueError:
+        return False
+    except TypeError:
+        return False

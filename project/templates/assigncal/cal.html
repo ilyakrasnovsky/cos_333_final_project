@@ -182,22 +182,27 @@
 	//Functionality behind add and remove class buttons
 	function addClass () {
 		var input = document.getElementById("input").value;
-		//Query number of session courses on server
+		//Validate that entry can be a valid Princeton course
 		$.ajax({
-				url: '/numCourses',
-				method: 'GET'
-			}).done(function(data){
-				var numCourses = data.numCourses;
-				console.log("numCourses is : " + numCourses);
-				if (numCourses > 4)
-				{
-					alert("Cannot add more than 5 courses at a time");
-				}
-				else
-				{
-					if (input.length != 6)
+				url: '/validateCourse',
+				method: 'POST',
+				data: {'input': input}
+		}).done(function(data){
+			if (data.valid == false)
+			{
+				alert("Not a valid course offering at Princeton");
+			}
+			else
+			{
+				//Query number of session courses on server
+				$.ajax({
+					url: '/numCourses',
+					method: 'GET'
+				}).done(function(data){
+					var numCourses = data.numCourses;
+					if (numCourses > 4)
 					{
-						alert("Course name must be 6 characters");	
+						alert("Cannot add more than 5 courses at a time");
 					}
 					else
 					{
@@ -207,28 +212,36 @@
 							data: {'input': input}
 						}).done(function(){
 							location.reload();
-						});
+						});		
 					}	
-				}	
-			});
+				});	
+			}
+		});
 	}
 
 	function remClass () {
 		var input = document.getElementById("input").value;
-		if (input.length != 6)
-		{
-			alert("Course name must be 6 characters");	
-		}
-		else
-		{
-			$.ajax({
-				url: '/remClass',
+		//Validate that entry can be a valid Princeton course
+		$.ajax({
+				url: '/validateCourse',
 				method: 'POST',
 				data: {'input': input}
-			}).done(function(){
-				location.reload();
-			});
-		}
+		}).done(function(data){
+			if (data.valid == false)
+			{
+				alert("Not a valid course offering at Princeton");
+			}
+			else
+			{
+				$.ajax({
+					url: '/remClass',
+					method: 'POST',
+					data: {'input': input}
+				}).done(function(){
+					location.reload();
+				});
+			}
+		});		
 	}
 </script>
 </head>
