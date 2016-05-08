@@ -510,12 +510,12 @@ def get_credentials():
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, ' '.join(SCOPES))
         flow.user_agent = APPLICATION_NAME
         print ("flow user agent set")
-        if flags:
-            print ("auth flow begun")
-            credentials = tools.run_flow(flow, store, flags)
-            print ("auth flow completed")
-        else: # Needed only for compatibility with Python 2.6
-            credentials = tools.run_flow(flow, store)
+    #    if flags:
+        print ("auth flow begun")
+        credentials = tools.run_flow(flow, store, flags)
+        print ("auth flow completed")
+    #    else: # Needed only for compatibility with Python 2.6
+    #        credentials = tools.run_flow(flow, store)
         print('Storing credentials to ' + credential_path)
     return credentials
 
