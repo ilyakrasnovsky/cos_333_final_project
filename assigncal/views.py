@@ -285,10 +285,7 @@ def makeEventsFromCourse(coursename):
                     d[1] = len(globalFrees[free])
                 for n in netids:
                     if n not in d[2]:
-                        d[2].append(n)
-       
-
-                
+                        d[2].append(n)      
         #hour by hour coloring
         events.append({
                 "title" : "lol",
